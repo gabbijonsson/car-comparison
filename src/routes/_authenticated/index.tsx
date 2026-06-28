@@ -9,9 +9,9 @@ import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { sv } from '~/lib/i18n/sv'
-import { api } from '../../convex/_generated/api'
+import { api } from '../../../convex/_generated/api'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authenticated/')({
   component: HomePage,
 })
 

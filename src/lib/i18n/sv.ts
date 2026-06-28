@@ -14,7 +14,21 @@ export const sv = {
     logout: 'Logga ut',
   },
   auth: {
-    gatePlaceholder: 'Inloggning kommer i nästa steg',
+    loginTitle: 'Logga in',
+    loginDescription: 'Endast inbjudna användare kan logga in.',
+    emailLabel: 'E-post',
+    passwordLabel: 'Lösenord',
+    displayNameLabel: 'Visningsnamn',
+    profileTitle: 'Slutför din profil',
+    profileDescription: 'Ange ett visningsnamn så att andra i hushållet kan se vem du är.',
+    profileSave: 'Spara profil',
+    profileError: 'Kunde inte spara profilen. Försök igen.',
+    errors: {
+      invalidCredentials: 'Fel e-post eller lösenord.',
+      invalidPassword: 'Lösenordet uppfyller inte kraven.',
+      signupDisabled: 'Registrering är stängd. Kontakta administratören.',
+      generic: 'Inloggningen misslyckades. Försök igen.',
+    },
   },
   home: {
     title: 'Översikt',

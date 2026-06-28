@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { AppShell } from '~/components/layout/AppShell'
 import { sv } from '~/lib/i18n/sv'
 
-export const Route = createFileRoute('/compare')({
+export const Route = createFileRoute('/_authenticated/compare')({
   component: ComparePlaceholder,
 })
 

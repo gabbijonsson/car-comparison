@@ -28,6 +28,19 @@ On first run, log in and create a project. Convex writes `VITE_CONVEX_URL` to `.
 
 Health check: `convex/health.ts` → `api.health.get` returns `{ ok: true }`.
 
+### Auth (invite-only)
+
+Sign-in only — no public registration. Create users yourself:
+
+1. Set `USER_ADMIN_SECRET` in the Convex dashboard (Settings → Environment Variables).
+2. Run from the Convex dashboard Functions tab or CLI:
+
+```bash
+npx convex run admin/users:create '{"adminSecret":"your-secret","email":"user@example.com","password":"secure-password","name":"Anna"}'
+```
+
+Users sign in at `/login`. First login without a display name opens a profile completion drawer.
+
 ### Local dev
 
 ```bash
