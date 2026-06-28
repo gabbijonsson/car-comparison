@@ -1,7 +1,8 @@
-import type { ReactNode } from 'react'
 import { useConvexAuth } from '@convex-dev/auth/react'
 import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
+import { useMutation } from 'convex/react'
+import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { ProfileCompletionDrawer } from '~/components/auth/ProfileCompletionDrawer'
 import { sv } from '~/lib/i18n/sv'
@@ -14,6 +15,7 @@ type AuthenticatedGateProps = {
 
 export function AuthenticatedGate({ children, onUnauthenticated }: AuthenticatedGateProps) {
   const { isLoading, isAuthenticated } = useConvexAuth()
+  const ensureDefaults = useMutation(api.settings.ensureDefaults)
   const { data: currentUser } = useQuery({
     ...convexQuery(api.users.current, {}),
     enabled: isAuthenticated,
@@ -24,6 +26,12 @@ export function AuthenticatedGate({ children, onUnauthenticated }: Authenticated
       onUnauthenticated()
     }
   }, [isAuthenticated, isLoading, onUnauthenticated])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void ensureDefaults({})
+    }
+  }, [ensureDefaults, isAuthenticated])
 
   if (isLoading) {
     return (

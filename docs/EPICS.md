@@ -198,10 +198,10 @@ Full schema (Epic 3 is the schema epic)
 
 ### Acceptance criteria
 
-- [ ] Schema deploys without errors
-- [ ] Seed populates global settings + equipment categories
-- [ ] CRUD smoke tests via Convex dashboard
-- [ ] All tables enforce auth on mutations
+- [x] Schema deploys without errors
+- [x] Seed populates global settings + equipment categories
+- [x] CRUD smoke tests via Convex dashboard
+- [x] All tables enforce auth on mutations
 
 ### Dependencies
 
