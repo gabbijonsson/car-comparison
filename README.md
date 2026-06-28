@@ -49,8 +49,11 @@ Runs Convex sync + Vite on [http://localhost:3000](http://localhost:3000).
 
 ## Vercel deploy
 
-1. Push to GitHub; connect repo in Vercel (framework: TanStack Start).
-2. Add env vars (all environments):
+TanStack Start on Vercel requires the **Nitro** Vite plugin (`nitro/vite`) with `preset: 'vercel'`. Without it, Vercel detects the project as plain Vite (static SPA) and SSR/server functions break.
+
+1. Push to GitHub; connect repo in Vercel — should auto-detect **TanStack Start** (not Vite).
+2. If misdetected: Project Settings → General → Framework Preset → **TanStack Start**.
+3. Add env vars (all environments):
    - `VITE_CONVEX_URL` — Convex deployment URL for that environment
    - `CONVEX_DEPLOY_KEY` — from Convex dashboard → Deploy Key
 3. Preview deploys on PR; production on push to `main`.

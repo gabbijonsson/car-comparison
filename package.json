@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "convex dev --start 'vite dev'",
     "build": "vite build && tsc --noEmit",
-    "start": "node dist/server/server.js",
+    "start": "node .output/server/index.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
@@ -45,6 +45,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "@vitest/coverage-v8": "^4.1.9",
     "jsdom": "^29.1.1",
+    "nitro": "^3.0.260610-beta",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.3",
     "vite": "^8.0.9",
