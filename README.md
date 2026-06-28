@@ -47,12 +47,17 @@ Runs Convex sync + Vite on [http://localhost:3000](http://localhost:3000).
 | `npm run test` | Vitest unit tests |
 | `npm start` | Run Nitro output locally |
 
-## Vercel deploy
+TanStack Start on Vercel requires the **Nitro** Vite plugin (`nitro/vite`). Nitro is the deploy adapter — not the framework preset.
 
-TanStack Start on Vercel requires the **Nitro** Vite plugin (`nitro/vite`) with `preset: 'vercel'`. Without it, Vercel detects the project as plain Vite (static SPA) and SSR/server functions break.
+Vercel detects **TanStack Start** when both are direct dependencies in `package.json`:
 
-1. Push to GitHub; connect repo in Vercel — should auto-detect **TanStack Start** (not Vite).
-2. If misdetected: Project Settings → General → Framework Preset → **TanStack Start**.
+- `@tanstack/react-start`
+- `@tanstack/router-plugin`
+
+Without `@tanstack/router-plugin`, Vercel may misdetect as Vite or Nitro. `vercel.json` sets `"framework": "tanstack-start"` as override.
+
+1. Push to GitHub; connect repo in Vercel — should show **TanStack Start**.
+2. If dashboard still wrong after push: Settings → General → Framework Preset → **TanStack Start** → Save.
 3. Add env vars (all environments):
    - `VITE_CONVEX_URL` — Convex deployment URL for that environment
    - `CONVEX_DEPLOY_KEY` — from Convex dashboard → Deploy Key

@@ -40,6 +40,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
     "@tailwindcss/vite": "^4.2.2",
+    "@tanstack/router-plugin": "^1.168.18",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",

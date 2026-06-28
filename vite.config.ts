@@ -19,7 +19,7 @@ export default defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tanstackStart(),
-    nitro({ preset: 'vercel' }),
+    nitro(),
     viteReact(),
   ],
 })
