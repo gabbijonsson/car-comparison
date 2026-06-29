@@ -1,18 +1,21 @@
 import { z } from 'zod'
-import { engineTypeSchema, financingSchema, purchaseMethodSchema } from './enums'
+import { engineTypeSchema, purchaseMethodSchema } from './enums'
+import { financingSchema } from './financing'
+import { sourceLinkSchema } from './links'
+import { validationMessages as m } from './messages'
+import {
+  nonnegativeNumber,
+  optionalNonnegative,
+  optionalYear,
+  positiveNumber,
+  requiredTrimmedString,
+} from './primitives'
 
 const purchaseItemSchema = z.object({
   clientKey: z.string(),
-  title: z.string().trim().min(1, 'Titel krävs'),
-  costSek: z.number().nonnegative(),
+  title: requiredTrimmedString(m.purchaseItemTitleRequired),
+  costSek: nonnegativeNumber,
   paidUpfront: z.boolean(),
-})
-
-const sourceLinkSchema = z.object({
-  clientKey: z.string(),
-  title: z.string().trim().min(1, 'Titel krävs'),
-  url: z.string().trim().min(1, 'URL krävs'),
-  description: z.string().optional(),
 })
 
 const equipmentLinkSchema = z.object({
@@ -22,22 +25,22 @@ const equipmentLinkSchema = z.object({
 
 export const prospectFormSchema = z
   .object({
-    brand: z.string().trim().min(1, 'Märke krävs'),
-    model: z.string().trim().min(1, 'Modell krävs'),
-    title: z.string().trim().min(1, 'Titel krävs'),
-    modelYear: z.number().int().min(1900).max(2100).optional(),
-    registrationYear: z.number().int().min(1900).max(2100).optional(),
-    mileage: z.number().nonnegative().optional(),
+    brand: requiredTrimmedString(m.brandRequired),
+    model: requiredTrimmedString(m.modelRequired),
+    title: requiredTrimmedString(m.titleRequired),
+    modelYear: optionalYear,
+    registrationYear: optionalYear,
+    mileage: optionalNonnegative,
     engineType: engineTypeSchema,
     purchaseMethod: purchaseMethodSchema,
-    buyPriceSek: z.number().nonnegative(),
+    buyPriceSek: nonnegativeNumber,
     packageDescription: z.string().optional(),
-    insuranceMonthlySek: z.number().nonnegative(),
-    taxYearlySek: z.number().nonnegative(),
-    serviceSmallSek: z.number().nonnegative(),
-    serviceBigSek: z.number().nonnegative(),
-    serviceIntervalMonths: z.number().int().positive('Serviceintervall måste vara positivt'),
-    fuelConsumption: z.number().positive().optional(),
+    insuranceMonthlySek: nonnegativeNumber,
+    taxYearlySek: nonnegativeNumber,
+    serviceSmallSek: nonnegativeNumber,
+    serviceBigSek: nonnegativeNumber,
+    serviceIntervalMonths: z.number().int().positive(m.serviceIntervalPositive),
+    fuelConsumption: positiveNumber.optional(),
     financing: financingSchema.optional(),
     freeTextTagsInput: z.string(),
     equipment: z.array(equipmentLinkSchema),
@@ -49,7 +52,7 @@ export const prospectFormSchema = z
       if (data.fuelConsumption === undefined || data.fuelConsumption <= 0) {
         ctx.addIssue({
           code: 'custom',
-          message: 'Förbrukning krävs',
+          message: m.consumptionRequired,
           path: ['fuelConsumption'],
         })
       }
@@ -57,7 +60,7 @@ export const prospectFormSchema = z
     if (data.purchaseMethod === 'financed' && data.financing === undefined) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Finansieringsuppgifter krävs',
+        message: m.financingRequired,
         path: ['financing'],
       })
     }

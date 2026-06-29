@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { FormDrawer } from '~/components/layout/FormDrawer'
 import { Button } from '~/components/ui/button'
 import { sv } from '~/lib/i18n/sv'
+import { validationMessages as m } from '~/lib/validation/messages'
+import { noteTextSchema } from '~/lib/validation/notes'
 import { api } from '../../../convex/_generated/api'
 import type { Doc, Id } from '../../../convex/_generated/dataModel'
 
@@ -30,17 +32,18 @@ export function NoteFormDrawer({ open, onOpenChange, prospectId, note }: NoteFor
 
   async function handleSave() {
     const trimmed = text.trim()
-    if (trimmed.length === 0) {
-      setError(sv.detail.notePlaceholder)
+    const parsed = noteTextSchema.safeParse(trimmed)
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? m.noteRequired)
       return
     }
     setSaving(true)
     setError(null)
     try {
       if (isEditing) {
-        await updateNote({ id: note._id, text: trimmed })
+        await updateNote({ id: note._id, text: parsed.data })
       } else {
-        await createNote({ prospectId, text: trimmed })
+        await createNote({ prospectId, text: parsed.data })
       }
       setText('')
       onOpenChange(false)

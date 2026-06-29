@@ -23,7 +23,7 @@ export const createNote = mutation({
     const { userId } = await requireAuth(ctx)
     const text = args.text.trim()
     if (text.length === 0) {
-      throw new Error('Note text is required')
+      throw new Error('Anteckning krävs')
     }
 
     const now = Date.now()
@@ -56,15 +56,15 @@ export const updateNote = mutation({
     const { userId } = await requireAuth(ctx)
     const note = await ctx.db.get(args.id)
     if (note === null) {
-      throw new Error('Note not found')
+      throw new Error('Anteckningen hittades inte')
     }
     if (note.userId !== userId) {
-      throw new Error('Not allowed to edit this note')
+      throw new Error('Du kan inte redigera denna anteckning')
     }
 
     const text = args.text.trim()
     if (text.length === 0) {
-      throw new Error('Note text is required')
+      throw new Error('Anteckning krävs')
     }
 
     await ctx.db.patch(args.id, {
@@ -82,10 +82,10 @@ export const removeNote = mutation({
     const { userId } = await requireAuth(ctx)
     const note = await ctx.db.get(args.id)
     if (note === null) {
-      throw new Error('Note not found')
+      throw new Error('Anteckningen hittades inte')
     }
     if (note.userId !== userId) {
-      throw new Error('Not allowed to delete this note')
+      throw new Error('Du kan inte ta bort denna anteckning')
     }
 
     await ctx.db.delete(args.id)
@@ -122,7 +122,7 @@ export const setRating = mutation({
   handler: async (ctx, args) => {
     const { userId } = await requireAuth(ctx)
     if (args.score < 1 || args.score > 5 || !Number.isInteger(args.score)) {
-      throw new Error('Rating must be an integer between 1 and 5')
+      throw new Error('Betyg måste vara mellan 1 och 5')
     }
 
     const existing = await ctx.db

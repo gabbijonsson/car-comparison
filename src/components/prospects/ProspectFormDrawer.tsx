@@ -27,6 +27,16 @@ import {
 } from '~/lib/prospect/labels'
 import type { EngineType, PurchaseMethod } from '~/lib/prospect/types'
 import {
+  fieldError,
+  firstZodIssue,
+  nonnegativeFieldValidator,
+  positiveFieldValidator,
+  positiveIntFieldValidator,
+} from '~/lib/validation/form'
+import { periodMonthsFieldValidator } from '~/lib/validation/financing'
+import { isValidHttpUrl } from '~/lib/validation/primitives'
+import { validationMessages as m } from '~/lib/validation/messages'
+import {
   defaultFinancing,
   defaultProspectFormValues,
   formatFreeTextTags,
@@ -43,13 +53,6 @@ type ProspectFormDrawerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   prospectId?: Id<'prospects'>
-}
-
-function fieldError(errors: unknown[]): string | undefined {
-  if (errors.length === 0) {
-    return undefined
-  }
-  return errors.map((error) => String(error)).join(', ')
 }
 
 function parseNumberInput(value: string): number {
@@ -136,7 +139,7 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
       setSubmitError(null)
       const parsed = prospectFormSchema.safeParse(value)
       if (!parsed.success) {
-        setSubmitError(parsed.error.issues[0]?.message ?? sv.common.saveError)
+        setSubmitError(firstZodIssue(parsed.error))
         return
       }
 
@@ -241,7 +244,12 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
           }}
         >
           <FormSection title={sv.prospects.sections.identity}>
-            <form.Field name="title">
+            <form.Field
+              name="title"
+              validators={{
+                onChange: ({ value }) => (value.trim().length === 0 ? m.titleRequired : undefined),
+              }}
+            >
               {(field) => (
                 <div className="grid gap-2">
                   <Label htmlFor="prospect-title">{sv.prospects.listingTitle}</Label>
@@ -261,7 +269,12 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
             </form.Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <form.Field name="brand">
+              <form.Field
+                name="brand"
+                validators={{
+                  onChange: ({ value }) => (value.trim().length === 0 ? m.brandRequired : undefined),
+                }}
+              >
                 {(field) => (
                   <div className="grid gap-2">
                     <Label htmlFor="prospect-brand">{sv.prospects.brand}</Label>
@@ -280,7 +293,12 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                 )}
               </form.Field>
 
-              <form.Field name="model">
+              <form.Field
+                name="model"
+                validators={{
+                  onChange: ({ value }) => (value.trim().length === 0 ? m.modelRequired : undefined),
+                }}
+              >
                 {(field) => (
                   <div className="grid gap-2">
                     <Label htmlFor="prospect-model">{sv.prospects.model}</Label>
@@ -384,7 +402,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
           </FormSection>
 
           <FormSection title={sv.prospects.sections.price}>
-            <form.Field name="buyPriceSek">
+            <form.Field
+              name="buyPriceSek"
+              validators={{ onChange: ({ value }) => nonnegativeFieldValidator(value) }}
+            >
               {(field) => (
                 <div className="grid gap-2">
                   <Label htmlFor="prospect-buy-price">{sv.prospects.buyPrice}</Label>
@@ -396,6 +417,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                     onChange={(event) => field.handleChange(parseNumberInput(event.target.value))}
                     onBlur={field.handleBlur}
                   />
+                  {fieldError(field.state.meta.errors) ? (
+                    <p className="text-sm text-destructive">{fieldError(field.state.meta.errors)}</p>
+                  ) : null}
                 </div>
               )}
             </form.Field>
@@ -626,7 +650,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                       )}
                     </form.Field>
 
-                    <form.Field name="financing.periodMonths">
+                    <form.Field
+                      name="financing.periodMonths"
+                      validators={{ onChange: ({ value }) => periodMonthsFieldValidator(value ?? 0) }}
+                    >
                       {(field) => (
                         <div className="grid gap-2">
                           <Label htmlFor="prospect-period">{sv.prospects.periodMonths}</Label>
@@ -710,7 +737,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
 
           <FormSection title={sv.prospects.sections.runningCosts}>
             <div className="grid gap-4 sm:grid-cols-2">
-              <form.Field name="insuranceMonthlySek">
+              <form.Field
+                name="insuranceMonthlySek"
+                validators={{ onChange: ({ value }) => nonnegativeFieldValidator(value) }}
+              >
                 {(field) => (
                   <div className="grid gap-2">
                     <Label htmlFor="prospect-insurance">{sv.prospects.insuranceMonthly}</Label>
@@ -720,12 +750,21 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                       min={0}
                       value={field.state.value}
                       onChange={(event) => field.handleChange(parseNumberInput(event.target.value))}
+                      onBlur={field.handleBlur}
                     />
+                    {fieldError(field.state.meta.errors) ? (
+                      <p className="text-sm text-destructive">
+                        {fieldError(field.state.meta.errors)}
+                      </p>
+                    ) : null}
                   </div>
                 )}
               </form.Field>
 
-              <form.Field name="taxYearlySek">
+              <form.Field
+                name="taxYearlySek"
+                validators={{ onChange: ({ value }) => nonnegativeFieldValidator(value) }}
+              >
                 {(field) => (
                   <div className="grid gap-2">
                     <Label htmlFor="prospect-tax">{sv.prospects.taxYearly}</Label>
@@ -770,7 +809,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                 )}
               </form.Field>
 
-              <form.Field name="serviceIntervalMonths">
+              <form.Field
+                name="serviceIntervalMonths"
+                validators={{ onChange: ({ value }) => positiveIntFieldValidator(value) }}
+              >
                 {(field) => (
                   <div className="grid gap-2">
                     <Label htmlFor="prospect-service-interval">
@@ -791,7 +833,13 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
             <form.Subscribe selector={(state) => state.values.engineType}>
               {(engineType) =>
                 engineType !== 'hybrid' ? (
-                  <form.Field name="fuelConsumption">
+                  <form.Field
+                    name="fuelConsumption"
+                    validators={{
+                      onChange: ({ value }) =>
+                        value === undefined ? m.consumptionRequired : positiveFieldValidator(value),
+                    }}
+                  >
                     {(field) => (
                       <div className="grid gap-2">
                         <Label htmlFor="prospect-fuel">{fuelConsumptionLabel(engineType)}</Label>
@@ -886,13 +934,32 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                           />
                         )}
                       </form.Field>
-                      <form.Field name={`sourceLinks[${index}].url`}>
+                      <form.Field
+                        name={`sourceLinks[${index}].url`}
+                        validators={{
+                          onChange: ({ value }) => {
+                            const trimmed = value.trim()
+                            if (trimmed.length === 0) {
+                              return m.urlRequired
+                            }
+                            return isValidHttpUrl(trimmed) ? undefined : m.invalidUrl
+                          },
+                        }}
+                      >
                         {(linkField) => (
-                          <Input
-                            placeholder={sv.prospects.linkUrl}
-                            value={linkField.state.value}
-                            onChange={(event) => linkField.handleChange(event.target.value)}
-                          />
+                          <div className="grid gap-1">
+                            <Input
+                              placeholder={sv.prospects.linkUrl}
+                              value={linkField.state.value}
+                              onChange={(event) => linkField.handleChange(event.target.value)}
+                              onBlur={linkField.handleBlur}
+                            />
+                            {fieldError(linkField.state.meta.errors) ? (
+                              <p className="text-sm text-destructive">
+                                {fieldError(linkField.state.meta.errors)}
+                              </p>
+                            ) : null}
+                          </div>
                         )}
                       </form.Field>
                       <form.Field name={`sourceLinks[${index}].description`}>

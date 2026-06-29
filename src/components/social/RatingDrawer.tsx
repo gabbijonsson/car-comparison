@@ -4,6 +4,8 @@ import { FormDrawer } from '~/components/layout/FormDrawer'
 import { RatingControl } from '~/components/social/RatingControl'
 import { Button } from '~/components/ui/button'
 import { sv } from '~/lib/i18n/sv'
+import { validationMessages as m } from '~/lib/validation/messages'
+import { ratingScoreSchema } from '~/lib/validation/ratings'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 
@@ -28,14 +30,15 @@ export function RatingDrawer({ open, onOpenChange, prospectId, currentScore }: R
   }, [open, currentScore])
 
   async function handleSave() {
-    if (selected < 1 || selected > 5) {
-      setError(sv.detail.noRating)
+    const parsed = ratingScoreSchema.safeParse(selected)
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? m.ratingRange)
       return
     }
     setSaving(true)
     setError(null)
     try {
-      await setRating({ prospectId, score: selected })
+      await setRating({ prospectId, score: parsed.data })
       onOpenChange(false)
     } catch {
       setError(sv.common.saveError)

@@ -5,7 +5,13 @@ import {
   includedNiceToHave,
   missingMustHave,
 } from '~/lib/equipment/helpers'
-import { formatSek } from '~/lib/format'
+import {
+  formatConsumption,
+  formatDistance,
+  formatMonths,
+  formatPercent,
+  formatSek,
+} from '~/lib/format'
 import {
   toCompletionItems,
   toCostEngineSettings,
@@ -125,7 +131,7 @@ export function buildComparisonProspects(
       model: prospect.model,
       modelYear: dash(prospect.modelYear),
       mileage:
-        prospect.mileage !== undefined ? `${prospect.mileage.toLocaleString('sv-SE')} mil` : '—',
+        prospect.mileage !== undefined ? formatDistance(prospect.mileage) : '—',
       engineType: engineTypeLabel(prospect.engineType),
       purchaseMethod: purchaseMethodLabel(prospect.purchaseMethod),
       buyPriceSek: formatSek(prospect.buyPriceSek),
@@ -140,7 +146,9 @@ export function buildComparisonProspects(
           ? formatSek(financing.monthlyPayment)
           : '—',
       interestRate:
-        prospect.purchaseMethod === 'financed' && financing ? `${financing.interestRate} %` : '—',
+        prospect.purchaseMethod === 'financed' && financing
+          ? formatPercent(financing.interestRate)
+          : '—',
       monthlyAdminFee:
         prospect.purchaseMethod === 'financed' && financing
           ? formatSek(financing.monthlyAdminFee)
@@ -150,7 +158,9 @@ export function buildComparisonProspects(
           ? formatSek(financing.yearlyFee)
           : '—',
       periodMonths:
-        prospect.purchaseMethod === 'financed' && financing ? `${financing.periodMonths} mån` : '—',
+        prospect.purchaseMethod === 'financed' && financing
+          ? formatMonths(financing.periodMonths)
+          : '—',
       restValue:
         prospect.purchaseMethod === 'financed' && financing
           ? formatSek(financing.restValueSek)
@@ -159,11 +169,14 @@ export function buildComparisonProspects(
       taxYearly: formatSek(prospect.taxYearlySek),
       serviceSmall: formatSek(prospect.serviceSmallSek),
       serviceBig: formatSek(prospect.serviceBigSek),
-      serviceInterval: `${prospect.serviceIntervalMonths} mån`,
+      serviceInterval: formatMonths(prospect.serviceIntervalMonths),
       fuelConsumption:
         prospect.engineType === 'hybrid' || prospect.fuelConsumption === undefined
           ? '—'
-          : `${prospect.fuelConsumption} ${prospect.engineType === 'electric' ? 'kWh/mil' : 'L/mil'}`,
+          : formatConsumption(
+              prospect.fuelConsumption,
+              prospect.engineType === 'electric' ? 'kwh' : 'liter',
+            ),
       energyMonthly: `${formatSek(energyMonthly)}/mån (${fuelLabel.toLowerCase()})`,
       total3yr: formatSek(projection.totals.months36),
       total5yr: formatSek(projection.totals.months60),

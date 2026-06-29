@@ -922,9 +922,9 @@ Validator alignment only
 
 ### Acceptance criteria
 
-- [ ] No raw English validation strings in UI
-- [ ] SEK displayed as `600 000 kr`
-- [ ] Percentages show `%` suffix Swedish style
+- [x] No raw English validation strings in UI
+- [x] SEK displayed as `600 000 kr`
+- [x] Percentages show `%` suffix Swedish style
 
 ### Dependencies
 

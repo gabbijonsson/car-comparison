@@ -6,6 +6,7 @@ import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
 import { assertValidProspectFields, normalizeProspectFields } from './lib/prospectHelpers'
 import {
+  assertValidUrl,
   engineTypeValidator,
   financingValidator,
   prospectStatusValidator,
@@ -248,7 +249,7 @@ export const update = mutation({
     const { userId } = await requireAuth(ctx)
     const existing = await ctx.db.get(args.id)
     if (existing === null || existing.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
 
     const { id, ...rawFields } = args
@@ -281,7 +282,7 @@ export const archive = mutation({
     const { userId } = await requireAuth(ctx)
     const existing = await ctx.db.get(args.id)
     if (existing === null || existing.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
     if (existing.status === 'archived') {
       return args.id
@@ -309,10 +310,10 @@ export const remove = mutation({
     const { userId } = await requireAuth(ctx)
     const existing = await ctx.db.get(args.id)
     if (existing === null || existing.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
     if (existing.status !== 'archived') {
-      throw new Error('Prospect must be archived before delete')
+      throw new Error('Bilen måste arkiveras innan den kan tas bort')
     }
 
     await ctx.db.patch(args.id, {
@@ -356,7 +357,7 @@ export const syncEquipment = mutation({
     await requireAuth(ctx)
     const prospect = await ctx.db.get(args.prospectId)
     if (prospect === null || prospect.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
 
     const existing = await ctx.db
@@ -504,7 +505,7 @@ export const syncPurchaseItems = mutation({
     await requireAuth(ctx)
     const prospect = await ctx.db.get(args.prospectId)
     if (prospect === null || prospect.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
 
     for (const item of args.items) {
@@ -583,7 +584,7 @@ export const removeSourceLink = mutation({
     const { userId } = await requireAuth(ctx)
     const link = await ctx.db.get(args.id)
     if (link === null) {
-      throw new Error('Link not found')
+      throw new Error('Länken hittades inte')
     }
 
     await ctx.db.delete(args.id)
@@ -616,7 +617,7 @@ export const syncSourceLinks = mutation({
     const { userId } = await requireAuth(ctx)
     const prospect = await ctx.db.get(args.prospectId)
     if (prospect === null || prospect.status === 'deleted') {
-      throw new Error('Prospect not found')
+      throw new Error('Bilen hittades inte')
     }
 
     for (const link of args.links) {
@@ -626,6 +627,7 @@ export const syncSourceLinks = mutation({
       if (link.url.trim().length === 0) {
         throw new Error('Länk kräver URL')
       }
+      assertValidUrl(link.url)
     }
 
     const existing = await ctx.db

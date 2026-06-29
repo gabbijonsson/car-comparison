@@ -28,7 +28,7 @@ export const updateProfile = mutation({
     const { userId } = await requireAuth(ctx)
     const name = args.name.trim()
     if (name.length === 0) {
-      throw new Error('Name is required')
+      throw new Error('Visningsnamn krävs')
     }
     await ctx.db.patch(userId, {
       name,

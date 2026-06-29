@@ -107,4 +107,15 @@ export function assertValidGlobalSettings(fields: GlobalSettingsFields): void {
   }
 }
 
+export function assertValidUrl(url: string): void {
+  try {
+    const parsed = new URL(url.trim())
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      throw new Error('Ogiltig URL')
+    }
+  } catch {
+    throw new Error('Ogiltig URL')
+  }
+}
+
 export const ratingScoreValidator = v.number()

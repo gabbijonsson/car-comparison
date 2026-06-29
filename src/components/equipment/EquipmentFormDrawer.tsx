@@ -20,6 +20,8 @@ import {
 } from '~/lib/equipment/labels'
 import type { EquipmentCategory, EquipmentPriority } from '~/lib/equipment/types'
 import { sv } from '~/lib/i18n/sv'
+import { fieldError, firstZodIssue } from '~/lib/validation/form'
+import { validationMessages as m } from '~/lib/validation/messages'
 import { type EquipmentFormInput, equipmentFormSchema } from '~/lib/validation/equipment'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
@@ -35,13 +37,6 @@ const defaultValues: EquipmentFormInput = {
   name: '',
   category: 'other',
   priority: 'neutral',
-}
-
-function fieldError(errors: unknown[]): string | undefined {
-  if (errors.length === 0) {
-    return undefined
-  }
-  return errors.map((error) => String(error)).join(', ')
 }
 
 export function EquipmentFormDrawer({
@@ -61,7 +56,7 @@ export function EquipmentFormDrawer({
       setSubmitError(null)
       const parsed = equipmentFormSchema.safeParse(value)
       if (!parsed.success) {
-        setSubmitError(parsed.error.issues[0]?.message ?? sv.common.saveError)
+        setSubmitError(firstZodIssue(parsed.error))
         return
       }
 
@@ -108,7 +103,7 @@ export function EquipmentFormDrawer({
         <form.Field
           name="name"
           validators={{
-            onChange: ({ value }) => (value.trim().length === 0 ? 'Namn krävs' : undefined),
+            onChange: ({ value }) => (value.trim().length === 0 ? m.nameRequired : undefined),
           }}
         >
           {(field) => (

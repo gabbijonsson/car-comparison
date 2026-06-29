@@ -35,16 +35,3 @@ export const activityEventTypeSchema = z.enum([
 ])
 
 export type ActivityEventType = z.infer<typeof activityEventTypeSchema>
-
-export const financingSchema = z.object({
-  downPaymentSek: z.number().nonnegative().optional(),
-  monthlyPayment: z.number().nonnegative(),
-  interestRate: z.number().nonnegative(),
-  monthlyAdminFee: z.number().nonnegative(),
-  yearlyFee: z.number().nonnegative().optional(),
-  periodMonths: z.number().int().positive(),
-  restValueSek: z.number().nonnegative(),
-  useAutoCalc: z.boolean(),
-})
-
-export const ratingScoreSchema = z.number().int().min(1).max(5)

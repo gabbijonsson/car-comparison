@@ -5,18 +5,23 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { sv } from '~/lib/i18n/sv'
 import { toast } from '~/lib/toast'
-import { type GlobalSettingsInput, globalSettingsSchema } from '~/lib/validation/settings'
+import { fieldError, firstZodIssue } from '~/lib/validation/form'
+import {
+  annualKmFieldValidator,
+  dieselPriceFieldValidator,
+  hybridFuelPercentFieldValidator,
+  hybridKwhFieldValidator,
+  hybridLitersFieldValidator,
+  kwhPriceFieldValidator,
+  ownershipMonthsFieldValidator,
+  petrolPriceFieldValidator,
+  type GlobalSettingsInput,
+  globalSettingsSchema,
+} from '~/lib/validation/settings'
 import { api } from '../../../convex/_generated/api'
 
 type GlobalSettingsFormProps = {
   initialValues: GlobalSettingsInput
-}
-
-function fieldError(errors: unknown[]): string | undefined {
-  if (errors.length === 0) {
-    return undefined
-  }
-  return errors.map((error) => String(error)).join(', ')
 }
 
 function parseNumberInput(value: string): number {
@@ -32,7 +37,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
     onSubmit: async ({ value }) => {
       const parsed = globalSettingsSchema.safeParse(value)
       if (!parsed.success) {
-        toast.error(parsed.error.issues[0]?.message ?? sv.common.saveError)
+        toast.error(firstZodIssue(parsed.error))
         return
       }
 
@@ -56,10 +61,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
     >
       <form.Field
         name="annualKm"
-        validators={{
-          onChange: ({ value }) =>
-            value <= 0 ? 'Årlig körsträcka måste vara större än 0' : undefined,
-        }}
+        validators={{ onChange: ({ value }) => annualKmFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -85,9 +87,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="petrolPriceSekPerLiter"
-        validators={{
-          onChange: ({ value }) => (value <= 0 ? 'Bensinpris måste vara större än 0' : undefined),
-        }}
+        validators={{ onChange: ({ value }) => petrolPriceFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -113,9 +113,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="dieselPriceSekPerLiter"
-        validators={{
-          onChange: ({ value }) => (value <= 0 ? 'Dieselpris måste vara större än 0' : undefined),
-        }}
+        validators={{ onChange: ({ value }) => dieselPriceFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -141,9 +139,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="kwhPriceSekPerKwh"
-        validators={{
-          onChange: ({ value }) => (value <= 0 ? 'Elpris måste vara större än 0' : undefined),
-        }}
+        validators={{ onChange: ({ value }) => kwhPriceFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -169,12 +165,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="hybridFuelPercent"
-        validators={{
-          onChange: ({ value }) =>
-            value < 0 || value > 100
-              ? 'Hybrid bränsleandel måste vara mellan 0 och 100'
-              : undefined,
-        }}
+        validators={{ onChange: ({ value }) => hybridFuelPercentFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -201,10 +192,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="hybridLitersPerMil"
-        validators={{
-          onChange: ({ value }) =>
-            value <= 0 ? 'Hybrid förbrukning (L/mil) måste vara större än 0' : undefined,
-        }}
+        validators={{ onChange: ({ value }) => hybridLitersFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -232,10 +220,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="hybridKwhPerMil"
-        validators={{
-          onChange: ({ value }) =>
-            value <= 0 ? 'Hybrid förbrukning (kWh/mil) måste vara större än 0' : undefined,
-        }}
+        validators={{ onChange: ({ value }) => hybridKwhFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
@@ -261,12 +246,7 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
 
       <form.Field
         name="ownershipMonths"
-        validators={{
-          onChange: ({ value }) =>
-            !Number.isInteger(value) || value <= 0
-              ? 'Ägandeperiod måste vara ett positivt heltal'
-              : undefined,
-        }}
+        validators={{ onChange: ({ value }) => ownershipMonthsFieldValidator(value) }}
       >
         {(field) => (
           <div className="grid gap-2">
