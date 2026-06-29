@@ -515,12 +515,12 @@ None (derived); optional cache table later — not MVP
 
 ### Acceptance criteria
 
-- [ ] All 12 representative unit tests pass
-- [ ] Cash: month 0 spike = buyPrice + upfront completion items
-- [ ] Financed: month 0 = handpenning + upfront completion items; monthly payment each month; balloon at period end
-- [ ] Tax + yearly finance fee: calendar-month cadence — every 12 projection months `(m + 1) % 12 === 0`
-- [ ] Service alternates small/big from month = interval
-- [ ] Integer SEK rounding policy documented (round each line item)
+- [x] All 12 representative unit tests pass
+- [x] Cash: month 0 spike = buyPrice + upfront completion items
+- [x] Financed: month 0 = handpenning + upfront completion items; monthly payment each month; balloon at period end
+- [x] Tax + yearly finance fee: calendar-month cadence — every 12 projection months `(m + 1) % 12 === 0`
+- [x] Service alternates small/big from month = interval
+- [x] Integer SEK rounding policy documented (round each line item)
 
 ### Dependencies
 

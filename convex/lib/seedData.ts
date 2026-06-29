@@ -1,6 +1,7 @@
 import type { Id } from '../_generated/dataModel'
 import type { MutationCtx } from '../_generated/server'
 import { DEFAULT_EQUIPMENT, DEFAULT_GLOBAL_SETTINGS, GLOBAL_SETTINGS_KEY } from './defaults'
+import { seedProspects } from './prospectSeed'
 
 export async function seedGlobalSettings(
   ctx: MutationCtx,
@@ -49,8 +50,13 @@ export async function seedEquipmentCatalog(
 export async function seedDefaults(
   ctx: MutationCtx,
   actorUserId: Id<'users'>,
-): Promise<{ globalSettingsId: Id<'globalSettings'>; equipmentSeeded: number }> {
+): Promise<{
+  globalSettingsId: Id<'globalSettings'>
+  equipmentSeeded: number
+  prospectsSeeded: number
+}> {
   const globalSettingsId = await seedGlobalSettings(ctx, actorUserId)
   const equipmentSeeded = await seedEquipmentCatalog(ctx, actorUserId)
-  return { globalSettingsId, equipmentSeeded }
+  const prospectsSeeded = await seedProspects(ctx, actorUserId)
+  return { globalSettingsId, equipmentSeeded, prospectsSeeded }
 }
