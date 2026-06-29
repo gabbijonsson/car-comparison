@@ -1,5 +1,5 @@
-import { convexQuery } from '@convex-dev/react-query'
 import { useAuthActions } from '@convex-dev/auth/react'
+import { convexQuery } from '@convex-dev/react-query'
 import { useQuery } from '@tanstack/react-query'
 import { UserAvatar } from '~/components/auth/UserAvatar'
 import { Button } from '~/components/ui/button'

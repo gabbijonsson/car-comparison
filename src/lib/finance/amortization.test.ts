@@ -1,8 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  calculateLoanPrincipal,
-  calculateMonthlyPayment,
-} from './amortization'
+import { calculateLoanPrincipal, calculateMonthlyPayment } from './amortization'
 
 describe('calculateLoanPrincipal', () => {
   it('uses full buy price when no handpenning', () => {

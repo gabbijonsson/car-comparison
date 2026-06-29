@@ -636,11 +636,11 @@ None
 
 ### Acceptance criteria
 
-- [ ] All spec comparison fields present
-- [ ] Table horizontal scroll on medium desktop if many columns
-- [ ] Must-have missing shows red icon + popover list
-- [ ] Nice-to-have included shows positive indicator
-- [ ] No cramped side-by-side on mobile
+- [x] All spec comparison fields present
+- [x] Table horizontal scroll on medium desktop if many columns
+- [x] Must-have missing shows red icon + popover list
+- [x] Nice-to-have included shows positive indicator
+- [x] No cramped side-by-side on mobile
 
 ### Dependencies
 

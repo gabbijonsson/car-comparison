@@ -33,9 +33,8 @@ export const Route = createFileRoute('/_authenticated/prospects/')({
 })
 
 function ProspectsPage() {
-  const [statusFilter, setStatusFilter] = useState<Extract<ProspectStatus, 'active' | 'archived'>>(
-    'active',
-  )
+  const [statusFilter, setStatusFilter] =
+    useState<Extract<ProspectStatus, 'active' | 'archived'>>('active')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editing, setEditing] = useState<Doc<'prospects'> | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<Doc<'prospects'> | null>(null)

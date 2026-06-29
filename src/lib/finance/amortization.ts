@@ -23,10 +23,7 @@ export type MonthlyPaymentInput = {
   balloon: number
 }
 
-export function calculateLoanPrincipal(
-  buyPriceSek: number,
-  downPaymentSek?: number,
-): number {
+export function calculateLoanPrincipal(buyPriceSek: number, downPaymentSek?: number): number {
   return Math.max(0, buyPriceSek - (downPaymentSek ?? 0))
 }
 

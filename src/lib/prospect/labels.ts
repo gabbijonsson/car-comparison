@@ -1,5 +1,5 @@
-import type { EngineType, PurchaseMethod } from '~/lib/prospect/types'
 import { sv } from '~/lib/i18n/sv'
+import type { EngineType, PurchaseMethod } from '~/lib/prospect/types'
 
 export function engineTypeLabel(type: EngineType): string {
   return sv.prospects.engineTypes[type]

@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery } from 'convex/react'
-import { Plus, Trash2, CircleHelp } from 'lucide-react'
+import { CircleHelp, Plus, Trash2 } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { EquipmentPriorityBadge } from '~/components/equipment/EquipmentPriorityBadge'
 import { FormDrawer } from '~/components/layout/FormDrawer'
@@ -15,11 +15,8 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { equipmentCategoryLabel } from '~/lib/equipment/labels'
+import { calculateLoanPrincipal, calculateMonthlyPayment } from '~/lib/finance/amortization'
 import { formatSek } from '~/lib/format'
-import {
-  calculateLoanPrincipal,
-  calculateMonthlyPayment,
-} from '~/lib/finance/amortization'
 import { sv } from '~/lib/i18n/sv'
 import {
   engineTypeLabel,
@@ -35,8 +32,8 @@ import {
   formatFreeTextTags,
   newPurchaseItem,
   newSourceLink,
-  parseFreeTextTags,
   type ProspectFormInput,
+  parseFreeTextTags,
   prospectFormSchema,
 } from '~/lib/validation/prospect'
 import { api } from '../../../convex/_generated/api'
@@ -111,7 +108,8 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
       serviceBigSek: p.serviceBigSek,
       serviceIntervalMonths: p.serviceIntervalMonths,
       fuelConsumption: p.fuelConsumption,
-      financing: p.financing ?? (p.purchaseMethod === 'financed' ? { ...defaultFinancing } : undefined),
+      financing:
+        p.financing ?? (p.purchaseMethod === 'financed' ? { ...defaultFinancing } : undefined),
       freeTextTagsInput: formatFreeTextTags(p.freeTextEquipmentTags),
       equipment: details.equipment.map((row) => ({
         equipmentId: row.equipmentId,
@@ -219,7 +217,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
   }
 
   function equipmentIsPresent(equipmentId: string): boolean {
-    return form.getFieldValue('equipment').find((row) => row.equipmentId === equipmentId)?.isPresent ?? false
+    return (
+      form.getFieldValue('equipment').find((row) => row.equipmentId === equipmentId)?.isPresent ??
+      false
+    )
   }
 
   return (
@@ -251,7 +252,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                     onBlur={field.handleBlur}
                   />
                   {fieldError(field.state.meta.errors) ? (
-                    <p className="text-sm text-destructive">{fieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive">
+                      {fieldError(field.state.meta.errors)}
+                    </p>
                   ) : null}
                 </div>
               )}
@@ -269,7 +272,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                       onBlur={field.handleBlur}
                     />
                     {fieldError(field.state.meta.errors) ? (
-                      <p className="text-sm text-destructive">{fieldError(field.state.meta.errors)}</p>
+                      <p className="text-sm text-destructive">
+                        {fieldError(field.state.meta.errors)}
+                      </p>
                     ) : null}
                   </div>
                 )}
@@ -286,7 +291,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                       onBlur={field.handleBlur}
                     />
                     {fieldError(field.state.meta.errors) ? (
-                      <p className="text-sm text-destructive">{fieldError(field.state.meta.errors)}</p>
+                      <p className="text-sm text-destructive">
+                        {fieldError(field.state.meta.errors)}
+                      </p>
                     ) : null}
                   </div>
                 )}
@@ -443,7 +450,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                 <div className="grid gap-3">
                   <Label>{sv.prospects.addPurchaseItem}</Label>
                   {field.state.value.map((item, index) => (
-                    <div key={item.clientKey} className="grid gap-2 rounded-md border border-border p-3">
+                    <div
+                      key={item.clientKey}
+                      className="grid gap-2 rounded-md border border-border p-3"
+                    >
                       <form.Field name={`purchaseItems[${index}].title`}>
                         {(itemField) => (
                           <Input
@@ -763,7 +773,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
               <form.Field name="serviceIntervalMonths">
                 {(field) => (
                   <div className="grid gap-2">
-                    <Label htmlFor="prospect-service-interval">{sv.prospects.serviceInterval}</Label>
+                    <Label htmlFor="prospect-service-interval">
+                      {sv.prospects.serviceInterval}
+                    </Label>
                     <Input
                       id="prospect-service-interval"
                       type="number"
@@ -861,7 +873,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
               {(field) => (
                 <div className="grid gap-3">
                   {field.state.value.map((link, index) => (
-                    <div key={link.clientKey} className="grid gap-2 rounded-md border border-border p-3">
+                    <div
+                      key={link.clientKey}
+                      className="grid gap-2 rounded-md border border-border p-3"
+                    >
                       <form.Field name={`sourceLinks[${index}].title`}>
                         {(linkField) => (
                           <Input

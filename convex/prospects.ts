@@ -257,6 +257,61 @@ export const syncEquipment = mutation({
   },
 })
 
+export const listActiveForComparison = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAuth(ctx)
+    const prospects = await ctx.db
+      .query('prospects')
+      .withIndex('by_status', (q) => q.eq('status', 'active'))
+      .collect()
+
+    return Promise.all(
+      prospects.map(async (prospect) => {
+        const [purchaseItems, equipment, sourceLinks, ratings, vetoes] = await Promise.all([
+          ctx.db
+            .query('purchaseItems')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+          ctx.db
+            .query('prospectEquipment')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+          ctx.db
+            .query('sourceLinks')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+          ctx.db
+            .query('ratings')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+          ctx.db
+            .query('vetoes')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+        ])
+
+        const ratingCount = ratings.length
+        const avgScore =
+          ratingCount > 0
+            ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratingCount
+            : null
+
+        return {
+          prospect,
+          purchaseItems,
+          equipment,
+          sourceLinks,
+          avgScore,
+          ratingCount,
+          vetoCount: vetoes.length,
+          hasVeto: vetoes.length > 0,
+        }
+      }),
+    )
+  },
+})
+
 export const listActiveWithPurchaseItems = query({
   args: {},
   handler: async (ctx) => {
