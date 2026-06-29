@@ -151,8 +151,11 @@ function DashboardPage() {
             </div>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
                 <CardTitle>{sv.dashboard.activityTitle}</CardTitle>
+                <Button variant="link" className="h-auto p-0" render={<Link to="/activity" />}>
+                  {sv.dashboard.viewAllActivity}
+                </Button>
               </CardHeader>
               <CardContent>
                 <DashboardActivityFeed limit={10} />

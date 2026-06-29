@@ -34,6 +34,8 @@ export const activityEventTypeSchema = z.enum([
   'settings',
 ])
 
+export type ActivityEventType = z.infer<typeof activityEventTypeSchema>
+
 export const financingSchema = z.object({
   downPaymentSek: z.number().nonnegative().optional(),
   monthlyPayment: z.number().nonnegative(),

@@ -570,6 +570,7 @@ export const createSourceLink = mutation({
       prospectId: args.prospectId,
       entityId: id,
       message: `Länk "${args.title}" lades till`,
+      metadata: { linkTitle: args.title.trim(), action: 'add' },
     })
 
     return id
@@ -593,6 +594,7 @@ export const removeSourceLink = mutation({
       prospectId: link.prospectId,
       entityId: args.id,
       message: `Länk "${link.title}" togs bort`,
+      metadata: { linkTitle: link.title, action: 'remove' },
     })
 
     return args.id

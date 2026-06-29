@@ -62,6 +62,7 @@ export const create = mutation({
       actorUserId: userId,
       entityId: id,
       message: `Utrustning "${name}" lades till`,
+      metadata: { equipmentName: name, action: 'add' },
     })
 
     return id
@@ -103,6 +104,7 @@ export const update = mutation({
       actorUserId: userId,
       entityId: args.id,
       message: `Utrustning "${name}" uppdaterades`,
+      metadata: { equipmentName: name, action: 'update' },
     })
 
     return args.id
@@ -134,6 +136,7 @@ export const remove = mutation({
       actorUserId: userId,
       entityId: args.id,
       message: `Utrustning "${existing.name}" togs bort`,
+      metadata: { equipmentName: existing.name, action: 'remove' },
     })
 
     return args.id

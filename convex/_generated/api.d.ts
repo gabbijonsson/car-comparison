@@ -15,6 +15,7 @@ import type * as equipment from "../equipment.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
 import type * as lib_activity from "../lib/activity.js";
+import type * as lib_activityMessages from "../lib/activityMessages.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_defaults from "../lib/defaults.js";
 import type * as lib_equipmentHelpers from "../lib/equipmentHelpers.js";
@@ -42,6 +43,7 @@ declare const fullApi: ApiFromModules<{
   health: typeof health;
   http: typeof http;
   "lib/activity": typeof lib_activity;
+  "lib/activityMessages": typeof lib_activityMessages;
   "lib/auth": typeof lib_auth;
   "lib/defaults": typeof lib_defaults;
   "lib/equipmentHelpers": typeof lib_equipmentHelpers;

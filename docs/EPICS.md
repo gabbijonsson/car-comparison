@@ -812,9 +812,9 @@ activityEvents: {
 
 ### Acceptance criteria
 
-- [ ] All listed action types emit events
-- [ ] Messages grammatically correct Swedish
-- [ ] Feed query <50ms for 10 items
+- [x] All listed action types emit events
+- [x] Messages grammatically correct Swedish
+- [x] Feed query <50ms for 10 items
 
 ### Dependencies
 

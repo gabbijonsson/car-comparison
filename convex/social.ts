@@ -40,6 +40,7 @@ export const createNote = mutation({
       prospectId: args.prospectId,
       entityId: id,
       message: 'Anteckning lades till',
+      metadata: { action: 'add' },
     })
 
     return id
@@ -95,6 +96,7 @@ export const removeNote = mutation({
       prospectId: note.prospectId,
       entityId: args.id,
       message: 'Anteckning togs bort',
+      metadata: { action: 'remove' },
     })
 
     return args.id
@@ -186,6 +188,7 @@ export const toggleVeto = mutation({
         actorUserId: userId,
         prospectId: args.prospectId,
         message: 'Veto togs bort',
+        metadata: { action: 'remove' },
       })
       return { vetoed: false }
     }
@@ -201,6 +204,7 @@ export const toggleVeto = mutation({
       actorUserId: userId,
       prospectId: args.prospectId,
       message: 'Veto sattes',
+      metadata: { action: 'add' },
     })
 
     return { vetoed: true }
@@ -340,6 +344,7 @@ export const toggleReminder = mutation({
         actorUserId: userId,
         prospectId: args.prospectId,
         message: 'Påminnelse togs bort',
+        metadata: { action: 'remove' },
       })
       return { reminded: false }
     }
@@ -355,6 +360,7 @@ export const toggleReminder = mutation({
       actorUserId: userId,
       prospectId: args.prospectId,
       message: 'Påminnelse sattes',
+      metadata: { action: 'add' },
     })
 
     return { reminded: true }

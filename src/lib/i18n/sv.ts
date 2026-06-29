@@ -58,6 +58,7 @@ export const sv = {
     ratingCountLabel: 'betyg',
     activityTitle: 'Senaste aktivitet',
     activityEmpty: 'Ingen aktivitet ännu',
+    viewAllActivity: 'Visa all aktivitet',
     remindersTitle: 'Mina påminnelser',
     remindersEmpty: 'Inga påminnelser',
     reminderSince: 'Sedan {date}',
@@ -65,6 +66,12 @@ export const sv = {
     addProspect: 'Lägg till bil',
     openSettings: 'Inställningar',
     prospectsEmpty: 'Inga aktiva bilar',
+  },
+  activity: {
+    title: 'Aktivitet',
+    description: 'Alla händelser i hushållet — vem gjorde vad och när.',
+    empty: 'Ingen aktivitet ännu',
+    backToDashboard: 'Tillbaka till översikt',
   },
   compare: {
     title: 'Jämför',

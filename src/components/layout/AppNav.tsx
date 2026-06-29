@@ -6,6 +6,7 @@ const navItems = [
   { to: '/prospects', label: sv.nav.prospects },
   { to: '/compare', label: sv.nav.compare },
   { to: '/equipment', label: sv.nav.equipment },
+  { to: '/activity', label: sv.nav.activity },
   { to: '/settings', label: sv.nav.settings },
 ] as const
 

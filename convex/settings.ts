@@ -46,6 +46,7 @@ export const update = mutation({
         type: 'settings',
         actorUserId: userId,
         message: 'Globala inställningar skapades',
+        metadata: { action: 'create' },
       })
       return id
     }
@@ -59,6 +60,7 @@ export const update = mutation({
       type: 'settings',
       actorUserId: userId,
       message: 'Globala inställningar uppdaterades',
+      metadata: { action: 'update' },
     })
     return existing._id
   },
