@@ -18,6 +18,7 @@ import type * as lib_activity from "../lib/activity.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_defaults from "../lib/defaults.js";
 import type * as lib_equipmentHelpers from "../lib/equipmentHelpers.js";
+import type * as lib_prospectHelpers from "../lib/prospectHelpers.js";
 import type * as lib_seedData from "../lib/seedData.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as prospects from "../prospects.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/defaults": typeof lib_defaults;
   "lib/equipmentHelpers": typeof lib_equipmentHelpers;
+  "lib/prospectHelpers": typeof lib_prospectHelpers;
   "lib/seedData": typeof lib_seedData;
   "lib/validators": typeof lib_validators;
   prospects: typeof prospects;

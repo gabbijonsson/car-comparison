@@ -1,16 +1,216 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useMutation, useQuery } from 'convex/react'
+import { Archive, Pencil, Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
+import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { ProspectFormDrawer } from '~/components/prospects/ProspectFormDrawer'
+import { Button } from '~/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '~/components/ui/table'
+import { formatSek } from '~/lib/format'
 import { sv } from '~/lib/i18n/sv'
+import { engineTypeLabel, purchaseMethodLabel } from '~/lib/prospect/labels'
+import type { ProspectStatus } from '~/lib/prospect/types'
+import { api } from '../../../../convex/_generated/api'
+import type { Doc, Id } from '../../../../convex/_generated/dataModel'
 
 export const Route = createFileRoute('/_authenticated/prospects/')({
-  component: ProspectsPlaceholder,
+  component: ProspectsPage,
 })
 
-function ProspectsPlaceholder() {
+function ProspectsPage() {
+  const [statusFilter, setStatusFilter] = useState<Extract<ProspectStatus, 'active' | 'archived'>>(
+    'active',
+  )
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [editing, setEditing] = useState<Doc<'prospects'> | null>(null)
+  const [archiveTarget, setArchiveTarget] = useState<Doc<'prospects'> | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Doc<'prospects'> | null>(null)
+  const [actionError, setActionError] = useState<string | null>(null)
+
+  const listArgs = useMemo(() => ({ status: statusFilter }), [statusFilter])
+  const prospects = useQuery(api.prospects.list, listArgs)
+  const archiveProspect = useMutation(api.prospects.archive)
+  const removeProspect = useMutation(api.prospects.remove)
+
   return (
     <AppShell>
-      <h1 className="font-heading text-3xl font-semibold">{sv.nav.prospects}</h1>
-      <p className="mt-2 text-muted-foreground">Kommer i Epic 5.</p>
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h1 className="font-heading text-3xl font-semibold">{sv.prospects.title}</h1>
+            <p className="mt-2 max-w-2xl text-muted-foreground">{sv.prospects.description}</p>
+          </div>
+          <Button
+            onClick={() => {
+              setEditing(null)
+              setDrawerOpen(true)
+            }}
+          >
+            {sv.prospects.add}
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-sm text-muted-foreground">{sv.prospects.filterStatus}</span>
+          <Select
+            value={statusFilter}
+            onValueChange={(value) =>
+              setStatusFilter(value as Extract<ProspectStatus, 'active' | 'archived'>)
+            }
+          >
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="active">{sv.prospects.statusActive}</SelectItem>
+              <SelectItem value="archived">{sv.prospects.statusArchived}</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {prospects === undefined ? (
+          <p className="text-muted-foreground">{sv.common.loading}</p>
+        ) : prospects.length === 0 ? (
+          <p className="text-muted-foreground">{sv.prospects.empty}</p>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{sv.prospects.columns.title}</TableHead>
+                <TableHead>{sv.prospects.columns.brand}</TableHead>
+                <TableHead>{sv.prospects.columns.engine}</TableHead>
+                <TableHead>{sv.prospects.columns.method}</TableHead>
+                <TableHead>{sv.prospects.columns.price}</TableHead>
+                <TableHead className="text-right">{sv.common.actions}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {prospects.map((prospect) => (
+                <TableRow key={prospect._id}>
+                  <TableCell className="font-medium">{prospect.title}</TableCell>
+                  <TableCell>
+                    {prospect.brand} {prospect.model}
+                  </TableCell>
+                  <TableCell>{engineTypeLabel(prospect.engineType)}</TableCell>
+                  <TableCell>{purchaseMethodLabel(prospect.purchaseMethod)}</TableCell>
+                  <TableCell>{formatSek(prospect.buyPriceSek)}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={sv.common.edit}
+                        onClick={() => {
+                          setEditing(prospect)
+                          setDrawerOpen(true)
+                        }}
+                      >
+                        <Pencil />
+                      </Button>
+                      {statusFilter === 'active' ? (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={sv.prospects.archive}
+                          onClick={() => {
+                            setActionError(null)
+                            setArchiveTarget(prospect)
+                          }}
+                        >
+                          <Archive />
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          aria-label={sv.common.delete}
+                          onClick={() => {
+                            setActionError(null)
+                            setDeleteTarget(prospect)
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+
+        {actionError ? (
+          <p className="text-sm text-destructive" role="alert">
+            {actionError}
+          </p>
+        ) : null}
+      </div>
+
+      <ProspectFormDrawer
+        open={drawerOpen}
+        onOpenChange={(open) => {
+          setDrawerOpen(open)
+          if (!open) {
+            setEditing(null)
+          }
+        }}
+        prospectId={editing?._id as Id<'prospects'> | undefined}
+      />
+
+      <ConfirmDialog
+        open={archiveTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setArchiveTarget(null)
+          }
+        }}
+        title={sv.prospects.archiveTitle}
+        description={sv.prospects.archiveDescription}
+        confirmLabel={sv.prospects.archive}
+        onConfirm={() => {
+          if (archiveTarget === null) {
+            return
+          }
+          void archiveProspect({ id: archiveTarget._id }).catch(() => {
+            setActionError(sv.common.saveError)
+          })
+        }}
+      />
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDeleteTarget(null)
+          }
+        }}
+        title={sv.prospects.deleteTitle}
+        description={sv.prospects.deleteDescription}
+        onConfirm={() => {
+          if (deleteTarget === null) {
+            return
+          }
+          void removeProspect({ id: deleteTarget._id }).catch(() => {
+            setActionError(sv.common.deleteError)
+          })
+        }}
+      />
     </AppShell>
   )
 }

@@ -394,13 +394,13 @@ sourceLinks: { prospectId, title, url, description?, createdBy, createdAt }
 
 ### Acceptance criteria
 
-- [ ] All required fields validated
-- [ ] Financed vs cash toggles correct form sections
-- [ ] Completion items sum into effective upfront cost (engine uses this)
-- [ ] Archived prospects hidden from active dashboard/comparison defaults
-- [ ] Deleted prospects excluded from all lists; activity history may still reference them
-- [ ] Handpenning field shown only for financed purchases
-- [ ] createdBy populated from auth
+- [x] All required fields validated
+- [x] Financed vs cash toggles correct form sections
+- [x] Completion items sum into effective upfront cost (engine uses this)
+- [x] Archived prospects hidden from active dashboard/comparison defaults
+- [x] Deleted prospects excluded from all lists; activity history may still reference them
+- [x] Handpenning field shown only for financed purchases
+- [x] createdBy populated from auth
 
 ### Dependencies
 

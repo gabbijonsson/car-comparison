@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
+import { assertValidProspectFields, normalizeProspectFields } from './lib/prospectHelpers'
 import {
   engineTypeValidator,
   financingValidator,
@@ -56,13 +57,48 @@ export const get = query({
   },
 })
 
+export const getDetails = query({
+  args: { id: v.id('prospects') },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx)
+    const prospect = await ctx.db.get(args.id)
+    if (prospect === null || prospect.status === 'deleted') {
+      return null
+    }
+
+    const [equipment, purchaseItems, sourceLinks] = await Promise.all([
+      ctx.db
+        .query('prospectEquipment')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('purchaseItems')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('sourceLinks')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+    ])
+
+    return { prospect, equipment, purchaseItems, sourceLinks }
+  },
+})
+
 export const create = mutation({
   args: prospectFieldsValidator,
   handler: async (ctx, args) => {
     const { userId } = await requireAuth(ctx)
+    const fields = normalizeProspectFields({
+      ...args,
+      brand: args.brand.trim(),
+      model: args.model.trim(),
+      title: args.title.trim(),
+    })
+    assertValidProspectFields(fields)
     const now = Date.now()
     const id = await ctx.db.insert('prospects', {
-      ...args,
+      ...fields,
       status: 'active',
       createdBy: userId,
       createdAt: now,
@@ -73,7 +109,7 @@ export const create = mutation({
       type: 'create',
       actorUserId: userId,
       prospectId: id,
-      message: `Bil "${args.title}" lades till`,
+      message: `Bil "${fields.title}" lades till`,
     })
 
     return id
@@ -92,7 +128,14 @@ export const update = mutation({
       throw new Error('Prospect not found')
     }
 
-    const { id, ...fields } = args
+    const { id, ...rawFields } = args
+    const fields = normalizeProspectFields({
+      ...rawFields,
+      brand: rawFields.brand.trim(),
+      model: rawFields.model.trim(),
+      title: rawFields.title.trim(),
+    })
+    assertValidProspectFields(fields)
     await ctx.db.patch(id, {
       ...fields,
       updatedAt: Date.now(),
@@ -162,6 +205,17 @@ export const remove = mutation({
     })
 
     return args.id
+  },
+})
+
+export const listProspectEquipment = query({
+  args: { prospectId: v.id('prospects') },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx)
+    return await ctx.db
+      .query('prospectEquipment')
+      .withIndex('by_prospectId', (q) => q.eq('prospectId', args.prospectId))
+      .collect()
   },
 })
 
@@ -236,6 +290,55 @@ export const removePurchaseItem = mutation({
   },
 })
 
+export const syncPurchaseItems = mutation({
+  args: {
+    prospectId: v.id('prospects'),
+    items: v.array(
+      v.object({
+        title: v.string(),
+        costSek: v.number(),
+        paidUpfront: v.boolean(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx)
+    const prospect = await ctx.db.get(args.prospectId)
+    if (prospect === null || prospect.status === 'deleted') {
+      throw new Error('Prospect not found')
+    }
+
+    for (const item of args.items) {
+      if (item.title.trim().length === 0) {
+        throw new Error('Kompletteringspost kräver titel')
+      }
+      if (item.costSek < 0) {
+        throw new Error('Kompletteringspost måste ha kostnad 0 eller högre')
+      }
+    }
+
+    const existing = await ctx.db
+      .query('purchaseItems')
+      .withIndex('by_prospectId', (q) => q.eq('prospectId', args.prospectId))
+      .collect()
+
+    for (const row of existing) {
+      await ctx.db.delete(row._id)
+    }
+
+    for (const item of args.items) {
+      await ctx.db.insert('purchaseItems', {
+        prospectId: args.prospectId,
+        title: item.title.trim(),
+        costSek: item.costSek,
+        paidUpfront: item.paidUpfront,
+      })
+    }
+
+    return args.prospectId
+  },
+})
+
 export const listSourceLinks = query({
   args: { prospectId: v.id('prospects') },
   handler: async (ctx, args) => {
@@ -294,5 +397,56 @@ export const removeSourceLink = mutation({
     })
 
     return args.id
+  },
+})
+
+export const syncSourceLinks = mutation({
+  args: {
+    prospectId: v.id('prospects'),
+    links: v.array(
+      v.object({
+        title: v.string(),
+        url: v.string(),
+        description: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const { userId } = await requireAuth(ctx)
+    const prospect = await ctx.db.get(args.prospectId)
+    if (prospect === null || prospect.status === 'deleted') {
+      throw new Error('Prospect not found')
+    }
+
+    for (const link of args.links) {
+      if (link.title.trim().length === 0) {
+        throw new Error('Länk kräver titel')
+      }
+      if (link.url.trim().length === 0) {
+        throw new Error('Länk kräver URL')
+      }
+    }
+
+    const existing = await ctx.db
+      .query('sourceLinks')
+      .withIndex('by_prospectId', (q) => q.eq('prospectId', args.prospectId))
+      .collect()
+
+    for (const row of existing) {
+      await ctx.db.delete(row._id)
+    }
+
+    for (const link of args.links) {
+      await ctx.db.insert('sourceLinks', {
+        prospectId: args.prospectId,
+        title: link.title.trim(),
+        url: link.url.trim(),
+        description: link.description?.trim() || undefined,
+        createdBy: userId,
+        createdAt: Date.now(),
+      })
+    }
+
+    return args.prospectId
   },
 })
