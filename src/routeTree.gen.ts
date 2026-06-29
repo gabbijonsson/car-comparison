@@ -16,6 +16,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedEquipmentRouteImport } from './routes/_authenticated/equipment'
 import { Route as AuthenticatedCompareRouteImport } from './routes/_authenticated/compare'
 import { Route as AuthenticatedProspectsIndexRouteImport } from './routes/_authenticated/prospects/index'
+import { Route as AuthenticatedProspectsProspectIdRouteImport } from './routes/_authenticated/prospects/$prospectId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -52,6 +53,12 @@ const AuthenticatedProspectsIndexRoute =
     path: '/prospects/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProspectsProspectIdRoute =
+  AuthenticatedProspectsProspectIdRouteImport.update({
+    id: '/prospects/$prospectId',
+    path: '/prospects/$prospectId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof AuthenticatedCompareRoute
   '/equipment': typeof AuthenticatedEquipmentRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/prospects/$prospectId': typeof AuthenticatedProspectsProspectIdRoute
   '/prospects/': typeof AuthenticatedProspectsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -67,6 +75,7 @@ export interface FileRoutesByTo {
   '/equipment': typeof AuthenticatedEquipmentRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
+  '/prospects/$prospectId': typeof AuthenticatedProspectsProspectIdRoute
   '/prospects': typeof AuthenticatedProspectsIndexRoute
 }
 export interface FileRoutesById {
@@ -77,14 +86,28 @@ export interface FileRoutesById {
   '/_authenticated/equipment': typeof AuthenticatedEquipmentRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/prospects/$prospectId': typeof AuthenticatedProspectsProspectIdRoute
   '/_authenticated/prospects/': typeof AuthenticatedProspectsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/login' | '/compare' | '/equipment' | '/settings' | '/prospects/'
+    | '/'
+    | '/login'
+    | '/compare'
+    | '/equipment'
+    | '/settings'
+    | '/prospects/$prospectId'
+    | '/prospects/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/compare' | '/equipment' | '/settings' | '/' | '/prospects'
+  to:
+    | '/login'
+    | '/compare'
+    | '/equipment'
+    | '/settings'
+    | '/'
+    | '/prospects/$prospectId'
+    | '/prospects'
   id:
     | '__root__'
     | '/_authenticated'
@@ -93,6 +116,7 @@ export interface FileRouteTypes {
     | '/_authenticated/equipment'
     | '/_authenticated/settings'
     | '/_authenticated/'
+    | '/_authenticated/prospects/$prospectId'
     | '/_authenticated/prospects/'
   fileRoutesById: FileRoutesById
 }
@@ -152,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProspectsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/prospects/$prospectId': {
+      id: '/_authenticated/prospects/$prospectId'
+      path: '/prospects/$prospectId'
+      fullPath: '/prospects/$prospectId'
+      preLoaderRoute: typeof AuthenticatedProspectsProspectIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -160,6 +191,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedEquipmentRoute: typeof AuthenticatedEquipmentRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedProspectsProspectIdRoute: typeof AuthenticatedProspectsProspectIdRoute
   AuthenticatedProspectsIndexRoute: typeof AuthenticatedProspectsIndexRoute
 }
 
@@ -168,6 +200,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedEquipmentRoute: AuthenticatedEquipmentRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedProspectsProspectIdRoute: AuthenticatedProspectsProspectIdRoute,
   AuthenticatedProspectsIndexRoute: AuthenticatedProspectsIndexRoute,
 }
 

@@ -1,4 +1,6 @@
 import { v } from 'convex/values'
+import type { Id } from './_generated/dataModel'
+import type { QueryCtx } from './_generated/server'
 import { mutation, query } from './_generated/server'
 import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
@@ -82,6 +84,127 @@ export const getDetails = query({
     ])
 
     return { prospect, equipment, purchaseItems, sourceLinks }
+  },
+})
+
+async function userDisplayName(
+  ctx: QueryCtx,
+  userId: Id<'users'>,
+  cache: Map<string, string>,
+): Promise<string> {
+  const key = userId
+  const cached = cache.get(key)
+  if (cached !== undefined) {
+    return cached
+  }
+  const user = await ctx.db.get(userId)
+  const name = user?.name?.trim() || user?.email || 'Okänd'
+  cache.set(key, name)
+  return name
+}
+
+export const getPageData = query({
+  args: { id: v.id('prospects') },
+  handler: async (ctx, args) => {
+    const { userId } = await requireAuth(ctx)
+    const prospect = await ctx.db.get(args.id)
+    if (prospect === null || prospect.status === 'deleted') {
+      return null
+    }
+
+    const [
+      equipmentRows,
+      purchaseItems,
+      sourceLinks,
+      notes,
+      ratings,
+      vetoes,
+      myReminder,
+      equipmentCatalog,
+    ] = await Promise.all([
+      ctx.db
+        .query('prospectEquipment')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('purchaseItems')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('sourceLinks')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('notes')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('ratings')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('vetoes')
+        .withIndex('by_prospectId', (q) => q.eq('prospectId', args.id))
+        .collect(),
+      ctx.db
+        .query('reminders')
+        .withIndex('by_prospectId_userId', (q) => q.eq('prospectId', args.id).eq('userId', userId))
+        .unique(),
+      ctx.db.query('equipment').collect(),
+    ])
+
+    const nameCache = new Map<string, string>()
+    const resolveName = (id: typeof userId) => userDisplayName(ctx, id, nameCache)
+
+    const notesWithAuthors = await Promise.all(
+      notes
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map(async (note) => ({
+          ...note,
+          authorName: await resolveName(note.userId),
+          isOwn: note.userId === userId,
+        })),
+    )
+
+    const ratingsWithUsers = await Promise.all(
+      ratings
+        .sort((a, b) => b.updatedAt - a.updatedAt)
+        .map(async (rating) => ({
+          ...rating,
+          userName: await resolveName(rating.userId),
+          isOwn: rating.userId === userId,
+        })),
+    )
+
+    const vetoesWithUsers = await Promise.all(
+      vetoes
+        .sort((a, b) => b.createdAt - a.createdAt)
+        .map(async (veto) => ({
+          ...veto,
+          userName: await resolveName(veto.userId),
+          isOwn: veto.userId === userId,
+        })),
+    )
+
+    const ratingCount = ratings.length
+    const avgScore =
+      ratingCount > 0 ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratingCount : null
+
+    return {
+      prospect,
+      equipmentRows,
+      equipmentCatalog,
+      purchaseItems,
+      sourceLinks,
+      notes: notesWithAuthors,
+      ratings: ratingsWithUsers,
+      vetoes: vetoesWithUsers,
+      avgScore,
+      ratingCount,
+      myRating: ratings.find((rating) => rating.userId === userId)?.score ?? null,
+      myVeto: vetoes.some((veto) => veto.userId === userId),
+      myReminder: myReminder !== null,
+    }
   },
 })
 

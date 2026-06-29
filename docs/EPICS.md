@@ -692,9 +692,9 @@ Read + mutations from Epic 11 sub-features
 
 ### Acceptance criteria
 
-- [ ] All prospect fields displayed in Swedish labels
-- [ ] Edit opens same form drawer as create (pre-filled)
-- [ ] 404 for invalid/archived if policy hides removed
+- [x] All prospect fields displayed in Swedish labels
+- [x] Edit opens same form drawer as create (pre-filled)
+- [x] 404 for invalid/archived if policy hides removed
 
 ### Dependencies
 

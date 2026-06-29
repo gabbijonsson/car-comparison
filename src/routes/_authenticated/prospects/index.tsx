@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { Archive, Pencil, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -101,7 +101,15 @@ function ProspectsPage() {
             <TableBody>
               {prospects.map((prospect) => (
                 <TableRow key={prospect._id}>
-                  <TableCell className="font-medium">{prospect.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      to="/prospects/$prospectId"
+                      params={{ prospectId: prospect._id }}
+                      className="hover:text-primary hover:underline"
+                    >
+                      {prospect.title}
+                    </Link>
+                  </TableCell>
                   <TableCell>
                     {prospect.brand} {prospect.model}
                   </TableCell>
