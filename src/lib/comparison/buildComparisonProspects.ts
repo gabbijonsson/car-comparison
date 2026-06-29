@@ -130,8 +130,7 @@ export function buildComparisonProspects(
       brand: prospect.brand,
       model: prospect.model,
       modelYear: dash(prospect.modelYear),
-      mileage:
-        prospect.mileage !== undefined ? formatDistance(prospect.mileage) : '—',
+      mileage: prospect.mileage !== undefined ? formatDistance(prospect.mileage) : '—',
       engineType: engineTypeLabel(prospect.engineType),
       purchaseMethod: purchaseMethodLabel(prospect.purchaseMethod),
       buyPriceSek: formatSek(prospect.buyPriceSek),

@@ -18,9 +18,7 @@ export const optionalYear = z
 
 export const optionalNonnegative = z.number().nonnegative(m.nonnegative).optional()
 
-export const urlString = requiredTrimmedString(m.urlRequired).pipe(
-  z.url({ error: m.invalidUrl }),
-)
+export const urlString = requiredTrimmedString(m.urlRequired).pipe(z.url({ error: m.invalidUrl }))
 
 export function isValidHttpUrl(value: string): boolean {
   try {

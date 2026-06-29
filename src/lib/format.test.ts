@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  formatConsumption,
-  formatDistance,
-  formatPercent,
-  formatSek,
-} from './format'
+import { formatConsumption, formatDistance, formatPercent, formatSek } from './format'
 
 describe('formatSek', () => {
   it('formats Swedish currency', () => {

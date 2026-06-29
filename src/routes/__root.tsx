@@ -25,10 +25,7 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
   notFoundComponent: () => (
-    <ErrorPageContent
-      title={sv.notFound.title}
-      description={sv.notFound.description}
-    />
+    <ErrorPageContent title={sv.notFound.title} description={sv.notFound.description} />
   ),
   component: RootComponent,
 })

@@ -272,7 +272,8 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
               <form.Field
                 name="brand"
                 validators={{
-                  onChange: ({ value }) => (value.trim().length === 0 ? m.brandRequired : undefined),
+                  onChange: ({ value }) =>
+                    value.trim().length === 0 ? m.brandRequired : undefined,
                 }}
               >
                 {(field) => (
@@ -296,7 +297,8 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
               <form.Field
                 name="model"
                 validators={{
-                  onChange: ({ value }) => (value.trim().length === 0 ? m.modelRequired : undefined),
+                  onChange: ({ value }) =>
+                    value.trim().length === 0 ? m.modelRequired : undefined,
                 }}
               >
                 {(field) => (
@@ -418,7 +420,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                     onBlur={field.handleBlur}
                   />
                   {fieldError(field.state.meta.errors) ? (
-                    <p className="text-sm text-destructive">{fieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive">
+                      {fieldError(field.state.meta.errors)}
+                    </p>
                   ) : null}
                 </div>
               )}
@@ -652,7 +656,9 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
 
                     <form.Field
                       name="financing.periodMonths"
-                      validators={{ onChange: ({ value }) => periodMonthsFieldValidator(value ?? 0) }}
+                      validators={{
+                        onChange: ({ value }) => periodMonthsFieldValidator(value ?? 0),
+                      }}
                     >
                       {(field) => (
                         <div className="grid gap-2">

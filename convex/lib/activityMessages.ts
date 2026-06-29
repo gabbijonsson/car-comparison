@@ -34,15 +34,10 @@ function isRemoveAction(ctx: ActivityMessageContext): boolean {
   return ctx.storedMessage?.includes('togs bort') ?? false
 }
 
-export const ACTIVITY_SV: Record<
-  ActivityEventType,
-  (ctx: ActivityMessageContext) => string
-> = {
+export const ACTIVITY_SV: Record<ActivityEventType, (ctx: ActivityMessageContext) => string> = {
   create: (ctx) => `${actorLabel(ctx.actorName)} lade till bil: ${carLabel(ctx.prospectTitle)}`,
-  update: (ctx) =>
-    `${actorLabel(ctx.actorName)} uppdaterade bil: ${carLabel(ctx.prospectTitle)}`,
-  archive: (ctx) =>
-    `${actorLabel(ctx.actorName)} arkiverade bil: ${carLabel(ctx.prospectTitle)}`,
+  update: (ctx) => `${actorLabel(ctx.actorName)} uppdaterade bil: ${carLabel(ctx.prospectTitle)}`,
+  archive: (ctx) => `${actorLabel(ctx.actorName)} arkiverade bil: ${carLabel(ctx.prospectTitle)}`,
   delete: (ctx) => `${actorLabel(ctx.actorName)} tog bort bil: ${carLabel(ctx.prospectTitle)}`,
   note: (ctx) =>
     isRemoveAction(ctx)
@@ -78,7 +73,7 @@ export const ACTIVITY_SV: Record<
     const name =
       typeof ctx.metadata?.equipmentName === 'string'
         ? ctx.metadata.equipmentName.trim()
-        : extractQuotedName(ctx.storedMessage) ?? 'utrustning'
+        : (extractQuotedName(ctx.storedMessage) ?? 'utrustning')
     const rawAction = ctx.metadata?.action
     const action =
       rawAction === 'remove' || rawAction === 'update' || rawAction === 'add'
@@ -109,9 +104,7 @@ function extractQuotedName(message: string | undefined): string | null {
   return match?.[1] ?? null
 }
 
-function inferEquipmentAction(
-  message: string | undefined,
-): 'add' | 'update' | 'remove' {
+function inferEquipmentAction(message: string | undefined): 'add' | 'update' | 'remove' {
   if (message?.includes('togs bort')) {
     return 'remove'
   }

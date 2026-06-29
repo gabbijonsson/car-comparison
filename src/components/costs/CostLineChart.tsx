@@ -78,69 +78,72 @@ export function CostLineChart({ series, onArchive }: CostLineChartProps) {
   return (
     <div className="grid gap-4">
       <div className="max-md:-mx-2 max-md:overflow-x-auto max-md:px-2">
-        <ChartContainer config={config} className="aspect-2/1 min-h-60 w-full min-w-[280px] md:min-h-72">
+        <ChartContainer
+          config={config}
+          className="aspect-2/1 min-h-60 w-full min-w-[280px] md:min-h-72"
+        >
           <LineChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={formatMonthTick}
-            label={{
-              value: sv.dashboard.chartXAxis,
-              position: 'insideBottom',
-              offset: -4,
-              className: 'fill-muted-foreground text-xs',
-            }}
-          />
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            width={72}
-            tickFormatter={(value: number) =>
-              new Intl.NumberFormat('sv-SE', {
-                notation: 'compact',
-                maximumFractionDigits: 0,
-              }).format(value)
-            }
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                labelFormatter={(_, payload) => {
-                  const month = payload?.[0]?.payload?.month
-                  return typeof month === 'number'
-                    ? sv.dashboard.chartTooltipMonth.replace('{month}', String(month))
-                    : ''
-                }}
-                formatter={(value, _name, item) => (
-                  <div className="flex w-full items-center justify-between gap-4">
-                    <span className="text-muted-foreground">{item.name}</span>
-                    <span className="font-mono font-medium tabular-nums">
-                      {formatSek(Number(value))}
-                    </span>
-                  </div>
-                )}
-              />
-            }
-          />
-          {series.map((line) => (
-            <Line
-              key={line.key}
-              type="monotone"
-              dataKey={line.key}
-              name={line.label}
-              stroke={`var(--color-${line.key})`}
-              strokeWidth={2}
-              strokeDasharray={line.hasVeto ? '6 4' : undefined}
-              dot={false}
-              activeDot={{ r: 4 }}
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="month"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              tickFormatter={formatMonthTick}
+              label={{
+                value: sv.dashboard.chartXAxis,
+                position: 'insideBottom',
+                offset: -4,
+                className: 'fill-muted-foreground text-xs',
+              }}
             />
-          ))}
-        </LineChart>
-      </ChartContainer>
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              width={72}
+              tickFormatter={(value: number) =>
+                new Intl.NumberFormat('sv-SE', {
+                  notation: 'compact',
+                  maximumFractionDigits: 0,
+                }).format(value)
+              }
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  labelFormatter={(_, payload) => {
+                    const month = payload?.[0]?.payload?.month
+                    return typeof month === 'number'
+                      ? sv.dashboard.chartTooltipMonth.replace('{month}', String(month))
+                      : ''
+                  }}
+                  formatter={(value, _name, item) => (
+                    <div className="flex w-full items-center justify-between gap-4">
+                      <span className="text-muted-foreground">{item.name}</span>
+                      <span className="font-mono font-medium tabular-nums">
+                        {formatSek(Number(value))}
+                      </span>
+                    </div>
+                  )}
+                />
+              }
+            />
+            {series.map((line) => (
+              <Line
+                key={line.key}
+                type="monotone"
+                dataKey={line.key}
+                name={line.label}
+                stroke={`var(--color-${line.key})`}
+                strokeWidth={2}
+                strokeDasharray={line.hasVeto ? '6 4' : undefined}
+                dot={false}
+                activeDot={{ r: 4 }}
+              />
+            ))}
+          </LineChart>
+        </ChartContainer>
       </div>
 
       <ul className="flex flex-wrap gap-1 md:hidden">

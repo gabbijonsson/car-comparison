@@ -147,7 +147,6 @@ function EquipmentPage() {
             </TableBody>
           </Table>
         )}
-
       </div>
 
       <EquipmentFormDrawer

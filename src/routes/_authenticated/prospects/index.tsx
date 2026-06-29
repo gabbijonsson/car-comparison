@@ -176,7 +176,6 @@ function ProspectsPage() {
             </TableBody>
           </Table>
         )}
-
       </div>
 
       <ProspectFormDrawer
