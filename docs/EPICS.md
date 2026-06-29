@@ -455,11 +455,11 @@ Fields on `prospects.financing`
 
 ### Acceptance criteria
 
-- [ ] Manual entry always wins over auto value
-- [ ] Auto-calc matches documented formula within rounding (SEK integer)
-- [ ] Zero interest edge case handled
-- [ ] restValue = 0 supported (fully amortizing)
-- [ ] Handpenning increases month-0 upfront; decreases loan principal for auto-calc
+- [x] Manual entry always wins over auto value
+- [x] Auto-calc matches documented formula within rounding (SEK integer)
+- [x] Zero interest edge case handled
+- [x] restValue = 0 supported (fully amortizing)
+- [x] Handpenning increases month-0 upfront; decreases loan principal for auto-calc
 
 ### Dependencies
 

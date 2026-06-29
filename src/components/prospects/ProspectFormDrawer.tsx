@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery } from 'convex/react'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, CircleHelp } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { EquipmentPriorityBadge } from '~/components/equipment/EquipmentPriorityBadge'
 import { FormDrawer } from '~/components/layout/FormDrawer'
@@ -15,6 +15,11 @@ import {
   SelectValue,
 } from '~/components/ui/select'
 import { equipmentCategoryLabel } from '~/lib/equipment/labels'
+import { formatSek } from '~/lib/format'
+import {
+  calculateLoanPrincipal,
+  calculateMonthlyPayment,
+} from '~/lib/finance/amortization'
 import { sv } from '~/lib/i18n/sv'
 import {
   engineTypeLabel,
@@ -524,6 +529,22 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                     )}
                   </form.Field>
 
+                  <form.Subscribe
+                    selector={(state) => ({
+                      buyPriceSek: state.values.buyPriceSek,
+                      downPaymentSek: state.values.financing?.downPaymentSek,
+                    })}
+                  >
+                    {({ buyPriceSek, downPaymentSek }) => (
+                      <p className="text-sm text-muted-foreground">
+                        {sv.prospects.loanAmount}:{' '}
+                        <span className="font-medium text-foreground">
+                          {formatSek(calculateLoanPrincipal(buyPriceSek, downPaymentSek))}
+                        </span>
+                      </p>
+                    )}
+                  </form.Subscribe>
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <form.Field name="financing.monthlyPayment">
                       {(field) => (
@@ -534,9 +555,10 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                             type="number"
                             min={0}
                             value={field.state.value ?? 0}
-                            onChange={(event) =>
+                            onChange={(event) => {
                               field.handleChange(parseNumberInput(event.target.value))
-                            }
+                              form.setFieldValue('financing.useAutoCalc', false)
+                            }}
                           />
                         </div>
                       )}
@@ -628,6 +650,49 @@ export function ProspectFormDrawer({ open, onOpenChange, prospectId }: ProspectF
                       )}
                     </form.Field>
                   </div>
+
+                  <form.Subscribe
+                    selector={(state) => ({
+                      buyPriceSek: state.values.buyPriceSek,
+                      financing: state.values.financing,
+                    })}
+                  >
+                    {({ buyPriceSek, financing }) => (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            if (financing === undefined) {
+                              return
+                            }
+                            const principal = calculateLoanPrincipal(
+                              buyPriceSek,
+                              financing.downPaymentSek,
+                            )
+                            const suggested = calculateMonthlyPayment({
+                              principal,
+                              annualRate: financing.interestRate,
+                              months: financing.periodMonths,
+                              balloon: financing.restValueSek,
+                            })
+                            form.setFieldValue('financing.monthlyPayment', suggested)
+                            form.setFieldValue('financing.useAutoCalc', true)
+                          }}
+                        >
+                          {sv.prospects.useAutoCalc}
+                        </Button>
+                        <span
+                          className="inline-flex text-muted-foreground"
+                          title={sv.prospects.autoCalcTooltip}
+                        >
+                          <CircleHelp className="size-4" aria-hidden />
+                          <span className="sr-only">{sv.prospects.autoCalcTooltip}</span>
+                        </span>
+                      </div>
+                    )}
+                  </form.Subscribe>
                 </FormSection>
               ) : null
             }
