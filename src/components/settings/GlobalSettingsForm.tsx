@@ -9,14 +9,14 @@ import { fieldError, firstZodIssue } from '~/lib/validation/form'
 import {
   annualKmFieldValidator,
   dieselPriceFieldValidator,
+  type GlobalSettingsInput,
+  globalSettingsSchema,
   hybridFuelPercentFieldValidator,
   hybridKwhFieldValidator,
   hybridLitersFieldValidator,
   kwhPriceFieldValidator,
   ownershipMonthsFieldValidator,
   petrolPriceFieldValidator,
-  type GlobalSettingsInput,
-  globalSettingsSchema,
 } from '~/lib/validation/settings'
 import { api } from '../../../convex/_generated/api'
 

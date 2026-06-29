@@ -6,21 +6,21 @@ import { type CostChartSeries, CostLineChart } from '~/components/costs/CostLine
 import { DashboardActivityFeed } from '~/components/dashboard/DashboardActivityFeed'
 import { MyRemindersList } from '~/components/dashboard/MyRemindersList'
 import { TopRatedList } from '~/components/dashboard/TopRatedList'
-import { EmptyState } from '~/components/layout/EmptyState'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
 import { ProspectFormDrawer } from '~/components/prospects/ProspectFormDrawer'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { buildMonthlySchedule } from '~/lib/cost-engine'
 import { sv } from '~/lib/i18n/sv'
-import { toast } from '~/lib/toast'
 import {
   toCompletionItems,
   toCostEngineSettings,
   toProspectCostInput,
 } from '~/lib/prospect/costMapping'
+import { toast } from '~/lib/toast'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 

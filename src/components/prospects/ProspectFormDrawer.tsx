@@ -26,6 +26,7 @@ import {
   purchaseMethods,
 } from '~/lib/prospect/labels'
 import type { EngineType, PurchaseMethod } from '~/lib/prospect/types'
+import { periodMonthsFieldValidator } from '~/lib/validation/financing'
 import {
   fieldError,
   firstZodIssue,
@@ -33,9 +34,8 @@ import {
   positiveFieldValidator,
   positiveIntFieldValidator,
 } from '~/lib/validation/form'
-import { periodMonthsFieldValidator } from '~/lib/validation/financing'
-import { isValidHttpUrl } from '~/lib/validation/primitives'
 import { validationMessages as m } from '~/lib/validation/messages'
+import { isValidHttpUrl } from '~/lib/validation/primitives'
 import {
   defaultFinancing,
   defaultProspectFormValues,

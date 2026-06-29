@@ -26,9 +26,9 @@ import {
 } from '~/components/ui/table'
 import { formatSek } from '~/lib/format'
 import { sv } from '~/lib/i18n/sv'
-import { toast } from '~/lib/toast'
 import { engineTypeLabel, purchaseMethodLabel } from '~/lib/prospect/labels'
 import type { ProspectStatus } from '~/lib/prospect/types'
+import { toast } from '~/lib/toast'
 import { api } from '../../../../convex/_generated/api'
 import type { Doc, Id } from '../../../../convex/_generated/dataModel'
 

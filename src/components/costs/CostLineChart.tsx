@@ -1,5 +1,6 @@
 import { Archive } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
@@ -8,7 +9,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '~/components/ui/chart'
-import { EmptyState } from '~/components/layout/EmptyState'
 import { formatSek } from '~/lib/format'
 import { sv } from '~/lib/i18n/sv'
 import type { Id } from '../../../convex/_generated/dataModel'

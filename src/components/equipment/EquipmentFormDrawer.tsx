@@ -20,9 +20,9 @@ import {
 } from '~/lib/equipment/labels'
 import type { EquipmentCategory, EquipmentPriority } from '~/lib/equipment/types'
 import { sv } from '~/lib/i18n/sv'
+import { type EquipmentFormInput, equipmentFormSchema } from '~/lib/validation/equipment'
 import { fieldError, firstZodIssue } from '~/lib/validation/form'
 import { validationMessages as m } from '~/lib/validation/messages'
-import { type EquipmentFormInput, equipmentFormSchema } from '~/lib/validation/equipment'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 

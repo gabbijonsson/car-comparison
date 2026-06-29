@@ -1,4 +1,4 @@
-import { formatActivityMessage as formatMessage, type ActivityMessageContext } from './messages'
+import { type ActivityMessageContext, formatActivityMessage as formatMessage } from './messages'
 
 export type ActivityEventLike = ActivityMessageContext
 

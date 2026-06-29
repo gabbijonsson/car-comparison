@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { type CostChartSeries, CostLineChart } from '~/components/costs/CostLineChart'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import {
@@ -21,7 +22,6 @@ import type { CostCategory, CostProjection } from '~/lib/cost-engine'
 import { COST_CATEGORIES } from '~/lib/cost-engine'
 import { costCategoryLabel } from '~/lib/cost-engine/categoryLabels'
 import { formatSek } from '~/lib/format'
-import { EmptyState } from '~/components/layout/EmptyState'
 import { sv } from '~/lib/i18n/sv'
 import type { Id } from '../../../convex/_generated/dataModel'
 

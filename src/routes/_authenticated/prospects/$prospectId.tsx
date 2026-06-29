@@ -4,8 +4,8 @@ import { ChevronRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
-import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
 import { EmptyState } from '~/components/layout/EmptyState'
+import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
 import { ProspectActionBar } from '~/components/prospects/ProspectActionBar'
 import { ProspectCostSection } from '~/components/prospects/ProspectCostSection'
 import { ProspectDetailSections } from '~/components/prospects/ProspectDetailSections'
@@ -18,12 +18,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { buildComparisonProspects } from '~/lib/comparison/buildComparisonProspects'
 import { buildMonthlySchedule } from '~/lib/cost-engine'
 import { sv } from '~/lib/i18n/sv'
-import { toast } from '~/lib/toast'
 import {
   toCompletionItems,
   toCostEngineSettings,
   toProspectCostInput,
 } from '~/lib/prospect/costMapping'
+import { toast } from '~/lib/toast'
 import { api } from '../../../../convex/_generated/api'
 import type { Doc, Id } from '../../../../convex/_generated/dataModel'
 

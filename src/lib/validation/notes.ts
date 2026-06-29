@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import type { z } from 'zod'
 import { validationMessages as m } from './messages'
 import { requiredTrimmedString } from './primitives'
 

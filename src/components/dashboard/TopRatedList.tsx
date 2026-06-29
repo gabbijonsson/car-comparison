@@ -1,5 +1,5 @@
-import { Badge } from '~/components/ui/badge'
 import { EmptyState } from '~/components/layout/EmptyState'
+import { Badge } from '~/components/ui/badge'
 import { sv } from '~/lib/i18n/sv'
 import type { Id } from '../../../convex/_generated/dataModel'
 
