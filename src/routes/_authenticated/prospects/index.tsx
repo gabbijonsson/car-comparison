@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
 import { ProspectFormDrawer } from '~/components/prospects/ProspectFormDrawer'
+import { SocialCompact } from '~/components/social/SocialCompact'
 import { Button } from '~/components/ui/button'
 import {
   Select,
@@ -43,6 +44,11 @@ function ProspectsPage() {
 
   const listArgs = useMemo(() => ({ status: statusFilter }), [statusFilter])
   const prospects = useQuery(api.prospects.list, listArgs)
+  const prospectIds = useMemo(() => (prospects ?? []).map((p) => p._id), [prospects])
+  const socialSummaries = useQuery(
+    api.social.summariesForProspects,
+    prospectIds.length > 0 ? { prospectIds } : 'skip',
+  )
   const archiveProspect = useMutation(api.prospects.archive)
   const removeProspect = useMutation(api.prospects.remove)
 
@@ -95,6 +101,7 @@ function ProspectsPage() {
                 <TableHead>{sv.prospects.columns.engine}</TableHead>
                 <TableHead>{sv.prospects.columns.method}</TableHead>
                 <TableHead>{sv.prospects.columns.price}</TableHead>
+                <TableHead>{sv.prospects.columns.social}</TableHead>
                 <TableHead className="text-right">{sv.common.actions}</TableHead>
               </TableRow>
             </TableHeader>
@@ -116,6 +123,14 @@ function ProspectsPage() {
                   <TableCell>{engineTypeLabel(prospect.engineType)}</TableCell>
                   <TableCell>{purchaseMethodLabel(prospect.purchaseMethod)}</TableCell>
                   <TableCell>{formatSek(prospect.buyPriceSek)}</TableCell>
+                  <TableCell>
+                    <SocialCompact
+                      avgScore={socialSummaries?.[prospect._id]?.avgScore ?? null}
+                      ratingCount={socialSummaries?.[prospect._id]?.ratingCount ?? 0}
+                      vetoCount={socialSummaries?.[prospect._id]?.vetoCount ?? 0}
+                      hasVeto={socialSummaries?.[prospect._id]?.hasVeto ?? false}
+                    />
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
                       <Button

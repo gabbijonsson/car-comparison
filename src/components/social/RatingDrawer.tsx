@@ -1,10 +1,9 @@
 import { useMutation } from 'convex/react'
-import { Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { FormDrawer } from '~/components/layout/FormDrawer'
+import { RatingControl } from '~/components/social/RatingControl'
 import { Button } from '~/components/ui/button'
 import { sv } from '~/lib/i18n/sv'
-import { cn } from '~/lib/utils'
 import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 
@@ -53,24 +52,7 @@ export function RatingDrawer({ open, onOpenChange, prospectId, currentScore }: R
       description={sv.detail.rateDescription}
     >
       <div className="grid gap-6">
-        <div className="flex justify-center gap-2">
-          {[1, 2, 3, 4, 5].map((score) => (
-            <button
-              key={score}
-              type="button"
-              aria-label={`${score}/5`}
-              className="rounded-md p-2 transition-colors hover:bg-muted"
-              onClick={() => setSelected(score)}
-            >
-              <Star
-                className={cn(
-                  'size-8',
-                  score <= selected ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground',
-                )}
-              />
-            </button>
-          ))}
-        </div>
+        <RatingControl value={selected} onChange={setSelected} disabled={saving} />
 
         {error ? (
           <p className="text-sm text-destructive" role="alert">

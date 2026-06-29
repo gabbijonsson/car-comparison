@@ -1,10 +1,10 @@
-import { useMutation } from 'convex/react'
-import { Archive, Ban, Bell, MessageSquarePlus, Pencil, Star } from 'lucide-react'
+import { Archive, MessageSquarePlus, Pencil, Star } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { ReminderToggle } from '~/components/social/ReminderToggle'
+import { VetoButton } from '~/components/social/VetoButton'
 import { Button } from '~/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover'
 import { sv } from '~/lib/i18n/sv'
-import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 
 type ProspectActionBarProps = {
@@ -60,11 +60,8 @@ export function ProspectActionBar({
   onAddNote,
   onArchive,
 }: ProspectActionBarProps) {
-  const toggleVeto = useMutation(api.social.toggleVeto)
-  const toggleReminder = useMutation(api.social.toggleReminder)
-
   const ratingLines = ratings.map((rating) => `${rating.userName}: ${rating.score}/5`)
-  const vetoLines = vetoes.map((veto) => veto.userName)
+  const vetoNames = vetoes.map((veto) => veto.userName)
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -80,23 +77,9 @@ export function ProspectActionBar({
         </Button>
       </AttributionPopover>
 
-      <AttributionPopover label={sv.detail.attributionVetoes} items={vetoLines}>
-        <Button
-          variant={myVeto ? 'destructive' : 'outline'}
-          onClick={() => void toggleVeto({ prospectId })}
-        >
-          <Ban data-icon="inline-start" />
-          {myVeto ? sv.detail.vetoActive : sv.detail.veto}
-        </Button>
-      </AttributionPopover>
+      <VetoButton prospectId={prospectId} active={myVeto} vetoNames={vetoNames} />
 
-      <Button
-        variant={myReminder ? 'secondary' : 'outline'}
-        onClick={() => void toggleReminder({ prospectId })}
-      >
-        <Bell data-icon="inline-start" />
-        {myReminder ? sv.detail.reminderActive : sv.detail.reminder}
-      </Button>
+      <ReminderToggle prospectId={prospectId} active={myReminder} />
 
       <Button variant="outline" onClick={onAddNote}>
         <MessageSquarePlus data-icon="inline-start" />

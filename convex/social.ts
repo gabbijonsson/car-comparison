@@ -207,6 +207,44 @@ export const toggleVeto = mutation({
   },
 })
 
+export const summariesForProspects = query({
+  args: { prospectIds: v.array(v.id('prospects')) },
+  handler: async (ctx, args) => {
+    await requireAuth(ctx)
+
+    const summaries = await Promise.all(
+      args.prospectIds.map(async (prospectId) => {
+        const [ratings, vetoes] = await Promise.all([
+          ctx.db
+            .query('ratings')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospectId))
+            .collect(),
+          ctx.db
+            .query('vetoes')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospectId))
+            .collect(),
+        ])
+
+        const ratingCount = ratings.length
+        const avgScore =
+          ratingCount > 0
+            ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratingCount
+            : null
+
+        return {
+          prospectId,
+          avgScore,
+          ratingCount,
+          vetoCount: vetoes.length,
+          hasVeto: vetoes.length > 0,
+        }
+      }),
+    )
+
+    return Object.fromEntries(summaries.map((row) => [row.prospectId, row]))
+  },
+})
+
 export const ratingsAggregate = query({
   args: {},
   handler: async (ctx) => {

@@ -754,10 +754,10 @@ reminders: { prospectId, userId, createdAt }
 
 ### Acceptance criteria
 
-- [ ] One rating per user enforced
-- [ ] Veto undo removes row + activity event
-- [ ] Notes show author name + timestamp
-- [ ] Reminder not visible to other users' dashboards
+- [x] One rating per user enforced
+- [x] Veto undo removes row + activity event
+- [x] Notes show author name + timestamp
+- [x] Reminder not visible to other users' dashboards
 
 ### Dependencies
 

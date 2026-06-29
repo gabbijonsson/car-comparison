@@ -268,6 +268,7 @@ export const sv = {
       price: 'Köppris',
       method: 'Köpform',
       engine: 'Motor',
+      social: 'Betyg & veto',
     },
   },
   detail: {
