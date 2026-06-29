@@ -3,7 +3,7 @@ import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
 import { GLOBAL_SETTINGS_KEY } from './lib/defaults'
 import { seedDefaults } from './lib/seedData'
-import { globalSettingsFieldsValidator } from './lib/validators'
+import { assertValidGlobalSettings, globalSettingsFieldsValidator } from './lib/validators'
 
 export const get = query({
   args: {},
@@ -28,6 +28,7 @@ export const update = mutation({
   args: globalSettingsFieldsValidator,
   handler: async (ctx, args) => {
     const { userId } = await requireAuth(ctx)
+    assertValidGlobalSettings(args)
     const existing = await ctx.db
       .query('globalSettings')
       .withIndex('by_key', (q) => q.eq('key', GLOBAL_SETTINGS_KEY))

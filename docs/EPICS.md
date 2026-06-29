@@ -253,10 +253,10 @@ One place to set fuel prices, driving distance; all cost projections stay consis
 
 ### Acceptance criteria
 
-- [ ] Defaults seeded on first load
-- [ ] Invalid percentages rejected (0–100)
-- [ ] Change logged in activity feed
-- [ ] All users see updated values live
+- [x] Defaults seeded on first load
+- [x] Invalid percentages rejected (0–100)
+- [x] Change logged in activity feed
+- [x] All users see updated values live
 
 ### Dependencies
 
@@ -314,10 +314,10 @@ prospectEquipment: { prospectId, equipmentId, isPresent: boolean }
 
 ### Acceptance criteria
 
-- [ ] CRUD works in drawer forms
-- [ ] Must-have/nice-to-have badges in list
-- [ ] Duplicate names blocked with Swedish error
-- [ ] Deleting equipment updates prospect joins
+- [x] CRUD works in drawer forms
+- [x] Must-have/nice-to-have badges in list
+- [x] Duplicate names blocked with Swedish error
+- [x] Deleting equipment updates prospect joins
 
 ### Dependencies
 

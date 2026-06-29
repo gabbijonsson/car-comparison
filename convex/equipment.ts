@@ -2,6 +2,7 @@ import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
+import { findEquipmentByNormalizedName } from './lib/equipmentHelpers'
 import { equipmentCategoryValidator, equipmentPriorityValidator } from './lib/validators'
 
 export const list = query({
@@ -39,15 +40,12 @@ export const create = mutation({
     const { userId } = await requireAuth(ctx)
     const name = args.name.trim()
     if (name.length === 0) {
-      throw new Error('Name is required')
+      throw new Error('Namn krävs')
     }
 
-    const existing = await ctx.db
-      .query('equipment')
-      .withIndex('by_name', (q) => q.eq('name', name))
-      .first()
-    if (existing !== null && existing.name.toLowerCase() === name.toLowerCase()) {
-      throw new Error('Equipment name already exists')
+    const existing = await findEquipmentByNormalizedName(ctx, name)
+    if (existing !== null) {
+      throw new Error('Utrustningen finns redan')
     }
 
     const now = Date.now()
@@ -81,24 +79,17 @@ export const update = mutation({
     const { userId } = await requireAuth(ctx)
     const existing = await ctx.db.get(args.id)
     if (existing === null) {
-      throw new Error('Equipment not found')
+      throw new Error('Utrustningen hittades inte')
     }
 
     const name = args.name.trim()
     if (name.length === 0) {
-      throw new Error('Name is required')
+      throw new Error('Namn krävs')
     }
 
-    const duplicate = await ctx.db
-      .query('equipment')
-      .withIndex('by_name', (q) => q.eq('name', name))
-      .first()
-    if (
-      duplicate !== null &&
-      duplicate._id !== args.id &&
-      duplicate.name.toLowerCase() === name.toLowerCase()
-    ) {
-      throw new Error('Equipment name already exists')
+    const duplicate = await findEquipmentByNormalizedName(ctx, name, args.id)
+    if (duplicate !== null) {
+      throw new Error('Utrustningen finns redan')
     }
 
     await ctx.db.patch(args.id, {
@@ -124,7 +115,7 @@ export const remove = mutation({
     const { userId } = await requireAuth(ctx)
     const existing = await ctx.db.get(args.id)
     if (existing === null) {
-      throw new Error('Equipment not found')
+      throw new Error('Utrustningen hittades inte')
     }
 
     const joins = await ctx.db

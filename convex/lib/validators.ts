@@ -69,4 +69,42 @@ export const globalSettingsFieldsValidator = {
   ownershipMonths: v.number(),
 }
 
+export type GlobalSettingsFields = {
+  annualKm: number
+  petrolPriceSekPerLiter: number
+  dieselPriceSekPerLiter: number
+  kwhPriceSekPerKwh: number
+  hybridFuelPercent: number
+  hybridLitersPerMil: number
+  hybridKwhPerMil: number
+  ownershipMonths: number
+}
+
+export function assertValidGlobalSettings(fields: GlobalSettingsFields): void {
+  if (fields.annualKm <= 0) {
+    throw new Error('Årlig körsträcka måste vara större än 0')
+  }
+  if (fields.petrolPriceSekPerLiter <= 0) {
+    throw new Error('Bensinpris måste vara större än 0')
+  }
+  if (fields.dieselPriceSekPerLiter <= 0) {
+    throw new Error('Dieselpris måste vara större än 0')
+  }
+  if (fields.kwhPriceSekPerKwh <= 0) {
+    throw new Error('Elpris måste vara större än 0')
+  }
+  if (fields.hybridFuelPercent < 0 || fields.hybridFuelPercent > 100) {
+    throw new Error('Hybrid bränsleandel måste vara mellan 0 och 100')
+  }
+  if (fields.hybridLitersPerMil <= 0) {
+    throw new Error('Hybrid förbrukning (L/mil) måste vara större än 0')
+  }
+  if (fields.hybridKwhPerMil <= 0) {
+    throw new Error('Hybrid förbrukning (kWh/mil) måste vara större än 0')
+  }
+  if (!Number.isInteger(fields.ownershipMonths) || fields.ownershipMonths <= 0) {
+    throw new Error('Ägandeperiod måste vara ett positivt heltal')
+  }
+}
+
 export const ratingScoreValidator = v.number()
