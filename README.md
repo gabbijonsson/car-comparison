@@ -26,6 +26,14 @@ npx convex dev
 
 On first run, log in and create a project. Convex writes `VITE_CONVEX_URL` to `.env.local`.
 
+Enable demo seed data on the **dev** deployment only:
+
+```bash
+npx convex env set ENABLE_DATA_SEED true
+```
+
+Production never seeds data. After deploy, create global settings under **Inställningar** and add cars manually.
+
 Health check: `convex/health.ts` → `api.health.get` returns `{ ok: true }`.
 
 ### Auth (invite-only)

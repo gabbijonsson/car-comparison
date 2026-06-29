@@ -1,7 +1,7 @@
 import { mutation, query } from './_generated/server'
 import { logActivity } from './lib/activity'
 import { requireAuth } from './lib/auth'
-import { GLOBAL_SETTINGS_KEY } from './lib/defaults'
+import { GLOBAL_SETTINGS_FIELD_DEFAULTS, GLOBAL_SETTINGS_KEY } from './lib/defaults'
 import { seedDefaults } from './lib/seedData'
 import { assertValidGlobalSettings, globalSettingsFieldsValidator } from './lib/validators'
 
@@ -13,6 +13,14 @@ export const get = query({
       .query('globalSettings')
       .withIndex('by_key', (q) => q.eq('key', GLOBAL_SETTINGS_KEY))
       .unique()
+  },
+})
+
+export const getFieldDefaults = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAuth(ctx)
+    return GLOBAL_SETTINGS_FIELD_DEFAULTS
   },
 })
 

@@ -14,6 +14,17 @@ export const DEFAULT_GLOBAL_SETTINGS = {
   ownershipMonths: 120,
 } as const
 
+export const GLOBAL_SETTINGS_FIELD_DEFAULTS = {
+  annualKm: DEFAULT_GLOBAL_SETTINGS.annualKm,
+  petrolPriceSekPerLiter: DEFAULT_GLOBAL_SETTINGS.petrolPriceSekPerLiter,
+  dieselPriceSekPerLiter: DEFAULT_GLOBAL_SETTINGS.dieselPriceSekPerLiter,
+  kwhPriceSekPerKwh: DEFAULT_GLOBAL_SETTINGS.kwhPriceSekPerKwh,
+  hybridFuelPercent: DEFAULT_GLOBAL_SETTINGS.hybridFuelPercent,
+  hybridLitersPerMil: DEFAULT_GLOBAL_SETTINGS.hybridLitersPerMil,
+  hybridKwhPerMil: DEFAULT_GLOBAL_SETTINGS.hybridKwhPerMil,
+  ownershipMonths: DEFAULT_GLOBAL_SETTINGS.ownershipMonths,
+} as const
+
 export type DefaultEquipmentSeed = {
   name: string
   category:

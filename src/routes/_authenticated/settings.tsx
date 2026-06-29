@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useMutation, useQuery } from 'convex/react'
-import { useEffect } from 'react'
+import { useQuery } from 'convex/react'
 import { ActivityFeed } from '~/components/activity/ActivityFeed'
 import { AppShell } from '~/components/layout/AppShell'
 import { SettingsSkeleton } from '~/components/layout/LoadingSkeletons'
@@ -14,13 +13,9 @@ export const Route = createFileRoute('/_authenticated/settings')({
 
 function SettingsPage() {
   const settings = useQuery(api.settings.get)
-  const ensureDefaults = useMutation(api.settings.ensureDefaults)
+  const fieldDefaults = useQuery(api.settings.getFieldDefaults)
 
-  useEffect(() => {
-    if (settings === null) {
-      void ensureDefaults()
-    }
-  }, [settings, ensureDefaults])
+  const loading = settings === undefined || (settings === null && fieldDefaults === undefined)
 
   return (
     <AppShell>
@@ -30,9 +25,14 @@ function SettingsPage() {
           <p className="mt-2 max-w-2xl text-muted-foreground">{sv.settings.description}</p>
         </div>
 
-        {settings === undefined || settings === null ? (
+        {loading ? (
           <SettingsSkeleton />
-        ) : (
+        ) : settings === null && fieldDefaults !== undefined ? (
+          <>
+            <p className="max-w-2xl text-sm text-muted-foreground">{sv.settings.setupHint}</p>
+            <GlobalSettingsForm initialValues={fieldDefaults} />
+          </>
+        ) : settings !== null && settings !== undefined ? (
           <GlobalSettingsForm
             key={settings.updatedAt}
             initialValues={{
@@ -46,7 +46,7 @@ function SettingsPage() {
               ownershipMonths: settings.ownershipMonths,
             }}
           />
-        )}
+        ) : null}
 
         <ActivityFeed type="settings" />
       </div>

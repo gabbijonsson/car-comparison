@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery } from 'convex/react'
-import { useEffect, useMemo } from 'react'
+import { useQuery } from 'convex/react'
+import { useMemo } from 'react'
 import { ComparisonCards } from '~/components/comparison/ComparisonCards'
 import { ComparisonTable } from '~/components/comparison/ComparisonTable'
 import { ProspectPicker } from '~/components/comparison/ProspectPicker'
@@ -47,13 +47,6 @@ function ComparePage() {
   const comparisonRows = useQuery(api.prospects.listActiveForComparison)
   const equipmentCatalog = useQuery(api.equipment.list, {})
   const settings = useQuery(api.settings.get)
-  const ensureDefaults = useMutation(api.settings.ensureDefaults)
-
-  useEffect(() => {
-    if (settings === null) {
-      void ensureDefaults()
-    }
-  }, [settings, ensureDefaults])
 
   const allActiveIds = useMemo(
     () => (comparisonRows ?? []).map((row) => row.prospect._id),
@@ -106,10 +99,9 @@ function ComparePage() {
   const tableRows = useMemo(() => buildComparisonRows(sv.compare.sections, sv.compare.fields), [])
 
   const loading =
-    comparisonRows === undefined ||
-    equipmentCatalog === undefined ||
-    settings === undefined ||
-    settings === null
+    comparisonRows === undefined || equipmentCatalog === undefined || settings === undefined
+
+  const settingsMissing = settings === null
 
   function updateSelection(ids: Id<'prospects'>[]) {
     void navigate({
@@ -139,7 +131,9 @@ function ComparePage() {
               onChange={updateSelection}
             />
 
-            {comparisonProspects.length === 0 ? (
+            {settingsMissing ? (
+              <EmptyState title={sv.settings.requiredForCosts} />
+            ) : comparisonProspects.length === 0 ? (
               <EmptyState
                 title={
                   pickerOptions.length === 0

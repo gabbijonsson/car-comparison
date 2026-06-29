@@ -1,10 +1,11 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { ChevronRight } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
 import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { ProspectActionBar } from '~/components/prospects/ProspectActionBar'
 import { ProspectCostSection } from '~/components/prospects/ProspectCostSection'
 import { ProspectDetailSections } from '~/components/prospects/ProspectDetailSections'
@@ -41,7 +42,6 @@ function ProspectDetailPage() {
 
   const pageData = useQuery(api.prospects.getPageData, { id: typedId })
   const settings = useQuery(api.settings.get)
-  const ensureDefaults = useMutation(api.settings.ensureDefaults)
   const archiveProspect = useMutation(api.prospects.archive)
   const removeNote = useMutation(api.social.removeNote)
 
@@ -51,12 +51,6 @@ function ProspectDetailPage() {
   const [editingNote, setEditingNote] = useState<NoteRow | undefined>(undefined)
   const [deleteNoteTarget, setDeleteNoteTarget] = useState<NoteRow | null>(null)
   const [archiveOpen, setArchiveOpen] = useState(false)
-
-  useEffect(() => {
-    if (settings === null) {
-      void ensureDefaults()
-    }
-  }, [settings, ensureDefaults])
 
   const formatted = useMemo(() => {
     if (
@@ -148,10 +142,11 @@ function ProspectDetailPage() {
     )
   }
 
-  if (pageData === null || settings === null || formatted === null || projection === null) {
+  if (pageData === null) {
     throw notFound()
   }
 
+  const settingsMissing = settings === null
   const avgRatingLabel =
     pageData.ratingCount > 0 && pageData.avgScore !== null
       ? `${pageData.avgScore.toFixed(1)}/5 (${pageData.ratingCount} ${sv.dashboard.ratingCountLabel})`
@@ -209,22 +204,27 @@ function ProspectDetailPage() {
             }}
             onArchive={() => setArchiveOpen(true)}
           />
-
         </div>
 
-        <ProspectCostSection
-          prospectId={typedId}
-          title={pageData.prospect.title}
-          projection={projection}
-        />
+        {settingsMissing ? (
+          <EmptyState title={sv.settings.requiredForCosts} className="border-none py-4" />
+        ) : formatted !== null && projection !== null ? (
+          <>
+            <ProspectCostSection
+              prospectId={typedId}
+              title={pageData.prospect.title}
+              projection={projection}
+            />
 
-        <ProspectDetailSections
-          formatted={formatted}
-          prospect={pageData.prospect}
-          equipment={presentEquipment}
-          purchaseItems={pageData.purchaseItems}
-          sourceLinks={pageData.sourceLinks}
-        />
+            <ProspectDetailSections
+              formatted={formatted}
+              prospect={pageData.prospect}
+              equipment={presentEquipment}
+              purchaseItems={pageData.purchaseItems}
+              sourceLinks={pageData.sourceLinks}
+            />
+          </>
+        ) : null}
 
         <Card>
           <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3">

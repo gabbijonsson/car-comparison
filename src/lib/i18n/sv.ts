@@ -174,6 +174,9 @@ export const sv = {
       months: 'månader',
     },
     saved: 'Inställningarna sparades',
+    setupHint:
+      'Inga globala inställningar sparade ännu. Granska standardvärdena nedan och spara för att aktivera kostnadsberäkningar.',
+    requiredForCosts: 'Spara globala inställningar under Inställningar för att se kostnadsberäkningar.',
     activityTitle: 'Senaste ändringar',
     activityEmpty: 'Inga inställningsändringar ännu',
   },

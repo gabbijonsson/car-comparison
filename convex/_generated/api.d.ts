@@ -22,6 +22,7 @@ import type * as lib_equipmentHelpers from "../lib/equipmentHelpers.js";
 import type * as lib_prospectHelpers from "../lib/prospectHelpers.js";
 import type * as lib_prospectSeed from "../lib/prospectSeed.js";
 import type * as lib_seedData from "../lib/seedData.js";
+import type * as lib_seedEnabled from "../lib/seedEnabled.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as prospects from "../prospects.js";
 import type * as seed from "../seed.js";
@@ -50,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   "lib/prospectHelpers": typeof lib_prospectHelpers;
   "lib/prospectSeed": typeof lib_prospectSeed;
   "lib/seedData": typeof lib_seedData;
+  "lib/seedEnabled": typeof lib_seedEnabled;
   "lib/validators": typeof lib_validators;
   prospects: typeof prospects;
   seed: typeof seed;

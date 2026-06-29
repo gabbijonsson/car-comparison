@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useMutation, useQuery } from 'convex/react'
 import { Settings } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { type CostChartSeries, CostLineChart } from '~/components/costs/CostLineChart'
 import { DashboardActivityFeed } from '~/components/dashboard/DashboardActivityFeed'
 import { MyRemindersList } from '~/components/dashboard/MyRemindersList'
@@ -36,14 +36,7 @@ function DashboardPage() {
   const settings = useQuery(api.settings.get)
   const ratings = useQuery(api.social.ratingsAggregate)
   const reminders = useQuery(api.social.listMyReminders)
-  const ensureDefaults = useMutation(api.settings.ensureDefaults)
   const archiveProspect = useMutation(api.prospects.archive)
-
-  useEffect(() => {
-    if (settings === null) {
-      void ensureDefaults()
-    }
-  }, [settings, ensureDefaults])
 
   const vetoByProspect = useMemo(() => {
     const map = new Map<Id<'prospects'>, boolean>()
@@ -89,9 +82,10 @@ function DashboardPage() {
   const loading =
     activeWithItems === undefined ||
     settings === undefined ||
-    settings === null ||
     ratings === undefined ||
     reminders === undefined
+
+  const settingsMissing = settings === null
 
   return (
     <AppShell>
@@ -119,7 +113,9 @@ function DashboardPage() {
                 <CardTitle>{sv.dashboard.chartTitle}</CardTitle>
               </CardHeader>
               <CardContent>
-                {activeWithItems.length === 0 ? (
+                {settingsMissing ? (
+                  <EmptyState title={sv.settings.requiredForCosts} className="border-none py-8" />
+                ) : activeWithItems.length === 0 ? (
                   <EmptyState title={sv.dashboard.prospectsEmpty} className="border-none py-8" />
                 ) : (
                   <CostLineChart
