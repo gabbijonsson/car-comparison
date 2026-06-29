@@ -577,12 +577,12 @@ Read-only aggregations
 
 ### Acceptance criteria
 
-- [ ] Chart shows 120 months, one line per active prospect
-- [ ] Spikes visible (purchase, tax, service, balloon)
-- [ ] Top rated sorted by average desc; shows `(n betyg)`
-- [ ] Activity feed max 10, newest first, Swedish copy
-- [ ] Reminders only for `ctx.auth.userId`
-- [ ] Vetoed lines rendered dashed; user can archive vetoed prospect from dashboard
+- [x] Chart shows 120 months, one line per active prospect
+- [x] Spikes visible (purchase, tax, service, balloon)
+- [x] Top rated sorted by average desc; shows `(n betyg)`
+- [x] Activity feed max 10, newest first, Swedish copy
+- [x] Reminders only for `ctx.auth.userId`
+- [x] Vetoed lines rendered dashed; user can archive vetoed prospect from dashboard
 
 ### Dependencies
 

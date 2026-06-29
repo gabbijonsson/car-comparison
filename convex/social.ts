@@ -207,14 +207,80 @@ export const toggleVeto = mutation({
   },
 })
 
+export const ratingsAggregate = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAuth(ctx)
+    const prospects = await ctx.db
+      .query('prospects')
+      .withIndex('by_status', (q) => q.eq('status', 'active'))
+      .collect()
+
+    const rows = await Promise.all(
+      prospects.map(async (prospect) => {
+        const [ratings, vetoes] = await Promise.all([
+          ctx.db
+            .query('ratings')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+          ctx.db
+            .query('vetoes')
+            .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+            .collect(),
+        ])
+
+        const ratingCount = ratings.length
+        const avgScore =
+          ratingCount > 0
+            ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratingCount
+            : null
+
+        return {
+          prospectId: prospect._id,
+          title: prospect.title,
+          brand: prospect.brand,
+          model: prospect.model,
+          avgScore,
+          ratingCount,
+          vetoCount: vetoes.length,
+          hasVeto: vetoes.length > 0,
+        }
+      }),
+    )
+
+    return rows.sort((a, b) => {
+      if (a.hasVeto !== b.hasVeto) {
+        return a.hasVeto ? 1 : -1
+      }
+      const avgA = a.avgScore ?? -1
+      const avgB = b.avgScore ?? -1
+      if (avgB !== avgA) {
+        return avgB - avgA
+      }
+      return b.ratingCount - a.ratingCount
+    })
+  },
+})
+
 export const listMyReminders = query({
   args: {},
   handler: async (ctx) => {
     const { userId } = await requireAuth(ctx)
-    return await ctx.db
+    const reminders = await ctx.db
       .query('reminders')
       .withIndex('by_userId', (q) => q.eq('userId', userId))
       .collect()
+
+    return Promise.all(
+      reminders.map(async (reminder) => {
+        const prospect = await ctx.db.get(reminder.prospectId)
+        return {
+          ...reminder,
+          prospectTitle: prospect?.title ?? null,
+          prospectStatus: prospect?.status ?? null,
+        }
+      }),
+    )
   },
 })
 

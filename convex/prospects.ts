@@ -257,6 +257,27 @@ export const syncEquipment = mutation({
   },
 })
 
+export const listActiveWithPurchaseItems = query({
+  args: {},
+  handler: async (ctx) => {
+    await requireAuth(ctx)
+    const prospects = await ctx.db
+      .query('prospects')
+      .withIndex('by_status', (q) => q.eq('status', 'active'))
+      .collect()
+
+    return Promise.all(
+      prospects.map(async (prospect) => {
+        const purchaseItems = await ctx.db
+          .query('purchaseItems')
+          .withIndex('by_prospectId', (q) => q.eq('prospectId', prospect._id))
+          .collect()
+        return { prospect, purchaseItems }
+      }),
+    )
+  },
+})
+
 export const listPurchaseItems = query({
   args: { prospectId: v.id('prospects') },
   handler: async (ctx, args) => {

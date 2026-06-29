@@ -14,6 +14,20 @@ export const listRecent = query({
       .withIndex('by_createdAt')
       .order('desc')
       .take(limit)
-    return events
+
+    return Promise.all(
+      events.map(async (event) => {
+        const [actor, prospect] = await Promise.all([
+          ctx.db.get(event.actorUserId),
+          event.prospectId !== undefined ? ctx.db.get(event.prospectId) : Promise.resolve(null),
+        ])
+
+        return {
+          ...event,
+          actorName: actor?.name ?? actor?.email ?? null,
+          prospectTitle: prospect?.title ?? null,
+        }
+      }),
+    )
   },
 })
