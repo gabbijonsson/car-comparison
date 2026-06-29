@@ -5,6 +5,8 @@ import { ComparisonCards } from '~/components/comparison/ComparisonCards'
 import { ComparisonTable } from '~/components/comparison/ComparisonTable'
 import { ProspectPicker } from '~/components/comparison/ProspectPicker'
 import { AppShell } from '~/components/layout/AppShell'
+import { EmptyState } from '~/components/layout/EmptyState'
+import { CompareSkeleton } from '~/components/layout/LoadingSkeletons'
 import {
   buildComparisonProspects,
   buildComparisonRows,
@@ -128,7 +130,7 @@ function ComparePage() {
         </div>
 
         {loading ? (
-          <p className="text-muted-foreground">{sv.common.loading}</p>
+          <CompareSkeleton />
         ) : (
           <>
             <ProspectPicker
@@ -138,7 +140,13 @@ function ComparePage() {
             />
 
             {comparisonProspects.length === 0 ? (
-              <p className="text-muted-foreground">{sv.compare.emptySelection}</p>
+              <EmptyState
+                title={
+                  pickerOptions.length === 0
+                    ? sv.compare.noActiveProspects
+                    : sv.compare.emptySelection
+                }
+              />
             ) : (
               <>
                 {comparisonProspects.length > 5 ? (

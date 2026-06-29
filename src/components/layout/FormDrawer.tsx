@@ -24,7 +24,7 @@ export function FormDrawer({ open, onOpenChange, title, description, children }:
         className={cn(
           'gap-0 p-0',
           'max-md:inset-0 max-md:h-dvh max-md:w-screen max-md:max-w-none max-md:rounded-none max-md:border-0',
-          'md:h-full md:w-full md:max-w-xl md:border-l',
+          'md:h-full md:w-full md:max-w-lg md:border-l',
         )}
       >
         <SheetHeader className="border-b border-border px-6 py-4 text-left">

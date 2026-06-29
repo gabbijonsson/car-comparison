@@ -6,6 +6,8 @@ import { EquipmentFormDrawer } from '~/components/equipment/EquipmentFormDrawer'
 import { EquipmentPriorityBadge } from '~/components/equipment/EquipmentPriorityBadge'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { EmptyState } from '~/components/layout/EmptyState'
+import { TableSkeleton } from '~/components/layout/LoadingSkeletons'
 import { Button } from '~/components/ui/button'
 import {
   Select,
@@ -25,6 +27,7 @@ import {
 import { equipmentCategories, equipmentCategoryLabel } from '~/lib/equipment/labels'
 import type { EquipmentCategory } from '~/lib/equipment/types'
 import { sv } from '~/lib/i18n/sv'
+import { toast } from '~/lib/toast'
 import type { EquipmentFormInput } from '~/lib/validation/equipment'
 import { api } from '../../../convex/_generated/api'
 import type { Doc, Id } from '../../../convex/_generated/dataModel'
@@ -38,7 +41,6 @@ function EquipmentPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editing, setEditing] = useState<Doc<'equipment'> | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Doc<'equipment'> | null>(null)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const listArgs = useMemo(
     () => (categoryFilter === 'all' ? {} : { category: categoryFilter }),
@@ -94,9 +96,9 @@ function EquipmentPage() {
         </div>
 
         {equipment === undefined ? (
-          <p className="text-muted-foreground">{sv.common.loading}</p>
+          <TableSkeleton rows={5} columns={4} />
         ) : equipment.length === 0 ? (
-          <p className="text-muted-foreground">{sv.equipment.empty}</p>
+          <EmptyState title={sv.equipment.empty} />
         ) : (
           <Table>
             <TableHeader>
@@ -133,7 +135,6 @@ function EquipmentPage() {
                         size="icon-sm"
                         aria-label={sv.common.delete}
                         onClick={() => {
-                          setDeleteError(null)
                           setDeleteTarget(item)
                         }}
                       >
@@ -147,11 +148,6 @@ function EquipmentPage() {
           </Table>
         )}
 
-        {deleteError ? (
-          <p className="text-sm text-destructive" role="alert">
-            {deleteError}
-          </p>
-        ) : null}
       </div>
 
       <EquipmentFormDrawer
@@ -180,7 +176,7 @@ function EquipmentPage() {
             return
           }
           void removeEquipment({ id: deleteTarget._id }).catch(() => {
-            setDeleteError(sv.common.deleteError)
+            toast.deleteError()
           })
         }}
       />

@@ -3,6 +3,7 @@ import { useMutation, useQuery } from 'convex/react'
 import { useEffect } from 'react'
 import { ActivityFeed } from '~/components/activity/ActivityFeed'
 import { AppShell } from '~/components/layout/AppShell'
+import { SettingsSkeleton } from '~/components/layout/LoadingSkeletons'
 import { GlobalSettingsForm } from '~/components/settings/GlobalSettingsForm'
 import { sv } from '~/lib/i18n/sv'
 import { api } from '../../../convex/_generated/api'
@@ -30,7 +31,7 @@ function SettingsPage() {
         </div>
 
         {settings === undefined || settings === null ? (
-          <p className="text-muted-foreground">{sv.common.loading}</p>
+          <SettingsSkeleton />
         ) : (
           <GlobalSettingsForm
             key={settings.updatedAt}

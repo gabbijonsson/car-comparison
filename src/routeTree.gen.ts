@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FelRouteImport } from './routes/fel'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -22,6 +23,11 @@ import { Route as AuthenticatedProspectsProspectIdRouteImport } from './routes/_
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FelRoute = FelRouteImport.update({
+  id: '/fel',
+  path: '/fel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -68,6 +74,7 @@ const AuthenticatedProspectsProspectIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/fel': typeof FelRoute
   '/login': typeof LoginRoute
   '/activity': typeof AuthenticatedActivityRoute
   '/compare': typeof AuthenticatedCompareRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/prospects/': typeof AuthenticatedProspectsIndexRoute
 }
 export interface FileRoutesByTo {
+  '/fel': typeof FelRoute
   '/login': typeof LoginRoute
   '/activity': typeof AuthenticatedActivityRoute
   '/compare': typeof AuthenticatedCompareRoute
@@ -89,6 +97,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/fel': typeof FelRoute
   '/login': typeof LoginRoute
   '/_authenticated/activity': typeof AuthenticatedActivityRoute
   '/_authenticated/compare': typeof AuthenticatedCompareRoute
@@ -102,6 +111,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/fel'
     | '/login'
     | '/activity'
     | '/compare'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/prospects/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/fel'
     | '/login'
     | '/activity'
     | '/compare'
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/fel'
     | '/login'
     | '/_authenticated/activity'
     | '/_authenticated/compare'
@@ -134,6 +146,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  FelRoute: typeof FelRoute
   LoginRoute: typeof LoginRoute
 }
 
@@ -144,6 +157,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fel': {
+      id: '/fel'
+      path: '/fel'
+      fullPath: '/fel'
+      preLoaderRoute: typeof FelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -231,6 +251,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  FelRoute: FelRoute,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

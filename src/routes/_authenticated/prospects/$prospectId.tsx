@@ -4,6 +4,7 @@ import { ChevronRight } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
 import { ProspectActionBar } from '~/components/prospects/ProspectActionBar'
 import { ProspectCostSection } from '~/components/prospects/ProspectCostSection'
 import { ProspectDetailSections } from '~/components/prospects/ProspectDetailSections'
@@ -16,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { buildComparisonProspects } from '~/lib/comparison/buildComparisonProspects'
 import { buildMonthlySchedule } from '~/lib/cost-engine'
 import { sv } from '~/lib/i18n/sv'
+import { toast } from '~/lib/toast'
 import {
   toCompletionItems,
   toCostEngineSettings,
@@ -49,7 +51,6 @@ function ProspectDetailPage() {
   const [editingNote, setEditingNote] = useState<NoteRow | undefined>(undefined)
   const [deleteNoteTarget, setDeleteNoteTarget] = useState<NoteRow | null>(null)
   const [archiveOpen, setArchiveOpen] = useState(false)
-  const [actionError, setActionError] = useState<string | null>(null)
 
   useEffect(() => {
     if (settings === null) {
@@ -142,7 +143,7 @@ function ProspectDetailPage() {
   if (pageData === undefined || settings === undefined) {
     return (
       <AppShell>
-        <p className="text-muted-foreground">{sv.common.loading}</p>
+        <DashboardSkeleton />
       </AppShell>
     )
   }
@@ -209,11 +210,6 @@ function ProspectDetailPage() {
             onArchive={() => setArchiveOpen(true)}
           />
 
-          {actionError ? (
-            <p className="text-sm text-destructive" role="alert">
-              {actionError}
-            </p>
-          ) : null}
         </div>
 
         <ProspectCostSection
@@ -304,9 +300,8 @@ function ProspectDetailPage() {
         description={sv.prospects.archiveDescription}
         confirmLabel={sv.prospects.archive}
         onConfirm={() => {
-          setActionError(null)
           void archiveProspect({ id: typedId }).catch(() => {
-            setActionError(sv.common.saveError)
+            toast.error()
           })
         }}
       />
@@ -324,9 +319,8 @@ function ProspectDetailPage() {
           if (deleteNoteTarget === null) {
             return
           }
-          setActionError(null)
           void removeNote({ id: deleteNoteTarget._id }).catch(() => {
-            setActionError(sv.common.deleteError)
+            toast.deleteError()
           })
         }}
       />

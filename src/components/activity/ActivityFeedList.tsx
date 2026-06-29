@@ -1,4 +1,6 @@
 import { useQuery } from 'convex/react'
+import { EmptyState } from '~/components/layout/EmptyState'
+import { ListSkeleton } from '~/components/layout/LoadingSkeletons'
 import { sv } from '~/lib/i18n/sv'
 import type { ActivityEventType } from '~/lib/validation/enums'
 import { api } from '../../../convex/_generated/api'
@@ -22,11 +24,11 @@ export function ActivityFeedList({
   const events = useQuery(api.activity.listRecent, { limit, type })
 
   if (events === undefined) {
-    return <p className="text-sm text-muted-foreground">{sv.common.loading}</p>
+    return <ListSkeleton items={limit > 10 ? 8 : limit} />
   }
 
   if (events.length === 0) {
-    return <p className="text-sm text-muted-foreground">{emptyMessage}</p>
+    return <EmptyState title={emptyMessage} className="border-none py-6" />
   }
 
   return (

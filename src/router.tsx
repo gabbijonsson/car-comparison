@@ -3,6 +3,8 @@ import { ConvexQueryClient } from '@convex-dev/react-query'
 import { QueryClient } from '@tanstack/react-query'
 import { createRouter } from '@tanstack/react-router'
 import { routerWithQueryClient } from '@tanstack/react-router-with-query'
+import { RouteError } from '~/components/layout/RouteError'
+import { sv } from '~/lib/i18n/sv'
 import { routeTree } from './routeTree.gen'
 
 export function getRouter() {
@@ -30,8 +32,12 @@ export function getRouter() {
       context: { queryClient },
       scrollRestoration: true,
       defaultPreloadStaleTime: 0, // Let React Query handle all caching
-      defaultErrorComponent: (err) => <p>{err.error.stack}</p>,
-      defaultNotFoundComponent: () => <p>Sidan hittades inte</p>,
+      defaultErrorComponent: RouteError,
+      defaultNotFoundComponent: () => (
+        <div className="flex min-h-[50vh] items-center justify-center px-4">
+          <p className="text-muted-foreground">{sv.notFound.title}</p>
+        </div>
+      ),
       Wrap: ({ children }) => (
         <ConvexAuthProvider client={convexQueryClient.convexClient}>{children}</ConvexAuthProvider>
       ),

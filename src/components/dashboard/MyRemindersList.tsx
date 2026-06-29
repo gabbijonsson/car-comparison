@@ -1,5 +1,6 @@
 import { useMutation } from 'convex/react'
 import { BellOff } from 'lucide-react'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { Button } from '~/components/ui/button'
 import { sv } from '~/lib/i18n/sv'
 import { api } from '../../../convex/_generated/api'
@@ -28,7 +29,7 @@ export function MyRemindersList({ reminders }: MyRemindersListProps) {
   )
 
   if (active.length === 0) {
-    return <p className="text-sm text-muted-foreground">{sv.dashboard.remindersEmpty}</p>
+    return <EmptyState title={sv.dashboard.remindersEmpty} className="border-none py-6" />
   }
 
   return (

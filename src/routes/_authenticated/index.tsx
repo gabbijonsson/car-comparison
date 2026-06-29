@@ -6,13 +6,16 @@ import { type CostChartSeries, CostLineChart } from '~/components/costs/CostLine
 import { DashboardActivityFeed } from '~/components/dashboard/DashboardActivityFeed'
 import { MyRemindersList } from '~/components/dashboard/MyRemindersList'
 import { TopRatedList } from '~/components/dashboard/TopRatedList'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { DashboardSkeleton } from '~/components/layout/LoadingSkeletons'
 import { ProspectFormDrawer } from '~/components/prospects/ProspectFormDrawer'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { buildMonthlySchedule } from '~/lib/cost-engine'
 import { sv } from '~/lib/i18n/sv'
+import { toast } from '~/lib/toast'
 import {
   toCompletionItems,
   toCostEngineSettings,
@@ -28,7 +31,6 @@ export const Route = createFileRoute('/_authenticated/')({
 function DashboardPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [archiveTarget, setArchiveTarget] = useState<Id<'prospects'> | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
 
   const activeWithItems = useQuery(api.prospects.listActiveWithPurchaseItems)
   const settings = useQuery(api.settings.get)
@@ -108,10 +110,8 @@ function DashboardPage() {
           </div>
         </div>
 
-        {actionError ? <p className="text-sm text-destructive">{actionError}</p> : null}
-
         {loading ? (
-          <p className="text-muted-foreground">{sv.common.loading}</p>
+          <DashboardSkeleton />
         ) : (
           <>
             <Card>
@@ -120,7 +120,7 @@ function DashboardPage() {
               </CardHeader>
               <CardContent>
                 {activeWithItems.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">{sv.dashboard.prospectsEmpty}</p>
+                  <EmptyState title={sv.dashboard.prospectsEmpty} className="border-none py-8" />
                 ) : (
                   <CostLineChart
                     series={chartSeries}
@@ -179,12 +179,11 @@ function DashboardPage() {
             if (archiveTarget === null) {
               return
             }
-            setActionError(null)
             try {
               await archiveProspect({ id: archiveTarget })
               setArchiveTarget(null)
             } catch {
-              setActionError(sv.common.saveError)
+              toast.error()
             }
           }}
         />

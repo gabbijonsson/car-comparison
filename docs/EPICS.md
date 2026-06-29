@@ -868,10 +868,10 @@ None
 
 ### Acceptance criteria
 
-- [ ] Zero forms in Dialog (except confirm)
-- [ ] All CRUD forms use Sheet drawer
-- [ ] Mobile drawer 100vh; desktop max-w-lg side sheet
-- [ ] Lighthouse mobile usability pass on key routes
+- [x] Zero forms in Dialog (except confirm)
+- [x] All CRUD forms use Sheet drawer
+- [x] Mobile drawer 100vh; desktop max-w-lg side sheet
+- [x] Lighthouse mobile usability pass on key routes
 
 ### Dependencies
 

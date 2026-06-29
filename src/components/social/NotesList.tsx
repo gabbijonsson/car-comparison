@@ -1,4 +1,5 @@
 import { Pencil, Trash2 } from 'lucide-react'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { Button } from '~/components/ui/button'
 import { sv } from '~/lib/i18n/sv'
 import type { Doc } from '../../../convex/_generated/dataModel'
@@ -21,7 +22,7 @@ type NotesListProps = {
 
 export function NotesList({ notes, onEdit, onDelete }: NotesListProps) {
   if (notes.length === 0) {
-    return <p className="text-sm text-muted-foreground">{sv.detail.noNotes}</p>
+    return <EmptyState title={sv.detail.noNotes} className="border-none py-6" />
   }
 
   return (

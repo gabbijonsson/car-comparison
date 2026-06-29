@@ -1,4 +1,5 @@
 import { Badge } from '~/components/ui/badge'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { sv } from '~/lib/i18n/sv'
 import type { Id } from '../../../convex/_generated/dataModel'
 
@@ -27,7 +28,7 @@ export function TopRatedList({ rows }: TopRatedListProps) {
   const rated = rows.filter((row) => row.ratingCount > 0)
 
   if (rated.length === 0) {
-    return <p className="text-sm text-muted-foreground">{sv.dashboard.topRatedEmpty}</p>
+    return <EmptyState title={sv.dashboard.topRatedEmpty} className="border-none py-6" />
   }
 
   return (

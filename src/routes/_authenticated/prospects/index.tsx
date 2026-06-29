@@ -4,6 +4,8 @@ import { Archive, Pencil, Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { AppShell } from '~/components/layout/AppShell'
 import { ConfirmDialog } from '~/components/layout/ConfirmDialog'
+import { EmptyState } from '~/components/layout/EmptyState'
+import { TableSkeleton } from '~/components/layout/LoadingSkeletons'
 import { ProspectFormDrawer } from '~/components/prospects/ProspectFormDrawer'
 import { SocialCompact } from '~/components/social/SocialCompact'
 import { Button } from '~/components/ui/button'
@@ -24,6 +26,7 @@ import {
 } from '~/components/ui/table'
 import { formatSek } from '~/lib/format'
 import { sv } from '~/lib/i18n/sv'
+import { toast } from '~/lib/toast'
 import { engineTypeLabel, purchaseMethodLabel } from '~/lib/prospect/labels'
 import type { ProspectStatus } from '~/lib/prospect/types'
 import { api } from '../../../../convex/_generated/api'
@@ -40,7 +43,6 @@ function ProspectsPage() {
   const [editing, setEditing] = useState<Doc<'prospects'> | null>(null)
   const [archiveTarget, setArchiveTarget] = useState<Doc<'prospects'> | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Doc<'prospects'> | null>(null)
-  const [actionError, setActionError] = useState<string | null>(null)
 
   const listArgs = useMemo(() => ({ status: statusFilter }), [statusFilter])
   const prospects = useQuery(api.prospects.list, listArgs)
@@ -89,9 +91,9 @@ function ProspectsPage() {
         </div>
 
         {prospects === undefined ? (
-          <p className="text-muted-foreground">{sv.common.loading}</p>
+          <TableSkeleton rows={6} columns={6} />
         ) : prospects.length === 0 ? (
-          <p className="text-muted-foreground">{sv.prospects.empty}</p>
+          <EmptyState title={sv.prospects.empty} />
         ) : (
           <Table>
             <TableHeader>
@@ -150,7 +152,6 @@ function ProspectsPage() {
                           size="icon-sm"
                           aria-label={sv.prospects.archive}
                           onClick={() => {
-                            setActionError(null)
                             setArchiveTarget(prospect)
                           }}
                         >
@@ -162,7 +163,6 @@ function ProspectsPage() {
                           size="icon-sm"
                           aria-label={sv.common.delete}
                           onClick={() => {
-                            setActionError(null)
                             setDeleteTarget(prospect)
                           }}
                         >
@@ -177,11 +177,6 @@ function ProspectsPage() {
           </Table>
         )}
 
-        {actionError ? (
-          <p className="text-sm text-destructive" role="alert">
-            {actionError}
-          </p>
-        ) : null}
       </div>
 
       <ProspectFormDrawer
@@ -210,7 +205,7 @@ function ProspectsPage() {
             return
           }
           void archiveProspect({ id: archiveTarget._id }).catch(() => {
-            setActionError(sv.common.saveError)
+            toast.error()
           })
         }}
       />
@@ -229,7 +224,7 @@ function ProspectsPage() {
             return
           }
           void removeProspect({ id: deleteTarget._id }).catch(() => {
-            setActionError(sv.common.deleteError)
+            toast.deleteError()
           })
         }}
       />

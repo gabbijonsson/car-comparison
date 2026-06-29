@@ -140,6 +140,17 @@ export const sv = {
     empty: 'Inget att visa',
     saveError: 'Kunde inte spara. Försök igen.',
     deleteError: 'Kunde inte ta bort. Försök igen.',
+    saved: 'Sparat',
+  },
+  errors: {
+    title: 'Något gick fel',
+    description: 'Ett oväntat fel inträffade. Försök igen eller gå tillbaka till översikten.',
+    retry: 'Försök igen',
+    backHome: 'Till översikt',
+  },
+  notFound: {
+    title: 'Sidan hittades inte',
+    description: 'Adressen finns inte eller har flyttats.',
   },
   settings: {
     title: 'Globala inställningar',

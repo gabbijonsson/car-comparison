@@ -8,6 +8,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '~/components/ui/chart'
+import { EmptyState } from '~/components/layout/EmptyState'
 import { formatSek } from '~/lib/format'
 import { sv } from '~/lib/i18n/sv'
 import type { Id } from '../../../convex/_generated/dataModel'
@@ -68,7 +69,7 @@ function formatMonthTick(month: number): string {
 
 export function CostLineChart({ series, onArchive }: CostLineChartProps) {
   if (series.length === 0) {
-    return <p className="text-sm text-muted-foreground">{sv.dashboard.chartEmpty}</p>
+    return <EmptyState title={sv.dashboard.chartEmpty} className="border-none py-8" />
   }
 
   const chartData = buildChartRows(series)
@@ -76,8 +77,9 @@ export function CostLineChart({ series, onArchive }: CostLineChartProps) {
 
   return (
     <div className="grid gap-4">
-      <ChartContainer config={config} className="aspect-2/1 min-h-72 w-full">
-        <LineChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
+      <div className="max-md:-mx-2 max-md:overflow-x-auto max-md:px-2">
+        <ChartContainer config={config} className="aspect-2/1 min-h-60 w-full min-w-[280px] md:min-h-72">
+          <LineChart data={chartData} margin={{ top: 8, right: 8, left: 8, bottom: 0 }}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="month"
@@ -139,8 +141,37 @@ export function CostLineChart({ series, onArchive }: CostLineChartProps) {
           ))}
         </LineChart>
       </ChartContainer>
+      </div>
 
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex flex-wrap gap-1 md:hidden">
+        {series.map((line, index) => (
+          <li
+            key={line.prospectId}
+            className="flex max-w-full items-center gap-1.5 rounded-md border border-border px-2 py-1.5 text-xs"
+          >
+            <span
+              className="h-2 w-2 shrink-0 rounded-full"
+              style={{
+                backgroundColor: CHART_COLOR_VARS[index % CHART_COLOR_VARS.length],
+                ...(line.hasVeto
+                  ? {
+                      backgroundImage:
+                        'repeating-linear-gradient(90deg, transparent, transparent 2px, white 2px, white 4px)',
+                    }
+                  : {}),
+              }}
+            />
+            <span className="truncate font-medium">{line.label}</span>
+            {line.hasVeto ? (
+              <span className="shrink-0 text-destructive" title={sv.dashboard.vetoBadge}>
+                ✕
+              </span>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+
+      <ul className="hidden flex-wrap gap-2 md:flex">
         {series.map((line, index) => (
           <li
             key={line.prospectId}

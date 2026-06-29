@@ -1,5 +1,7 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
+import { ErrorPageContent } from '~/components/layout/ErrorPageContent'
+import { Toaster } from '~/components/ui/sonner'
 import { sv } from '~/lib/i18n/sv'
 import appCss from '~/styles/app.css?url'
 
@@ -22,7 +24,12 @@ export const Route = createRootRouteWithContext<{
       { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
-  notFoundComponent: () => <div>Sidan hittades inte</div>,
+  notFoundComponent: () => (
+    <ErrorPageContent
+      title={sv.notFound.title}
+      description={sv.notFound.description}
+    />
+  ),
   component: RootComponent,
 })
 
@@ -42,6 +49,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="min-h-screen antialiased">
         {children}
+        <Toaster richColors closeButton />
         <Scripts />
       </body>
     </html>

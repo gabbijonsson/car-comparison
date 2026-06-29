@@ -1,10 +1,10 @@
 import { useForm } from '@tanstack/react-form'
 import { useMutation } from 'convex/react'
-import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { sv } from '~/lib/i18n/sv'
+import { toast } from '~/lib/toast'
 import { type GlobalSettingsInput, globalSettingsSchema } from '~/lib/validation/settings'
 import { api } from '../../../convex/_generated/api'
 
@@ -26,25 +26,21 @@ function parseNumberInput(value: string): number {
 
 export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
   const updateSettings = useMutation(api.settings.update)
-  const [submitError, setSubmitError] = useState<string | null>(null)
-  const [saved, setSaved] = useState(false)
 
   const form = useForm({
     defaultValues: initialValues,
     onSubmit: async ({ value }) => {
-      setSubmitError(null)
-      setSaved(false)
       const parsed = globalSettingsSchema.safeParse(value)
       if (!parsed.success) {
-        setSubmitError(parsed.error.issues[0]?.message ?? sv.common.saveError)
+        toast.error(parsed.error.issues[0]?.message ?? sv.common.saveError)
         return
       }
 
       try {
         await updateSettings(parsed.data)
-        setSaved(true)
+        toast.success(sv.settings.saved)
       } catch {
-        setSubmitError(sv.common.saveError)
+        toast.error()
       }
     },
   })
@@ -293,13 +289,6 @@ export function GlobalSettingsForm({ initialValues }: GlobalSettingsFormProps) {
           </div>
         )}
       </form.Field>
-
-      {submitError ? (
-        <p className="text-sm text-destructive" role="alert">
-          {submitError}
-        </p>
-      ) : null}
-      {saved ? <p className="text-sm text-muted-foreground">{sv.settings.saved}</p> : null}
 
       <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
         {([canSubmit, isSubmitting]) => (
